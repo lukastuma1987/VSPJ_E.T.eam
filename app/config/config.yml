@@ -2,6 +2,8 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: "@FrontBundle/Resources/config/services.yml" }
+    - { resource: "@EditorialBundle/Resources/config/services.yml" }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -35,6 +37,9 @@ framework:
 twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
+    paths:
+        '%kernel.project_dir%/src/EditorialBundle/Resources/views': Editorial
+        '%kernel.project_dir%/src/FrontBundle/Resources/views': Front
 
 # Doctrine Configuration
 doctrine:
