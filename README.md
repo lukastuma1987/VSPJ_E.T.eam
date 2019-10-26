@@ -1,4 +1,4 @@
-## Sprovoznění na localhostu
+## Zprovoznění na localhostu
 
 Pro zprovoznění na localhostu spuste následující příkazy ve složce projektu:
 
