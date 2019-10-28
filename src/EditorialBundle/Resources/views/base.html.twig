@@ -3,13 +3,92 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="{{ asset('bundles/editorial/css/bootstrap.min.css') }}">
-
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('bundles/editorial/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/editorial/fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/editorial/css/admin.css') }}">
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-<div class="container">{% block content %}{% endblock %}</div>
+<div class="wrapper">
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3>Logos Polytechnikos</h3>
+            <strong>LP</strong>
+        </div>
+
+        <ul class="list-unstyled components">
+            <li>
+                <a href="{{ path('editorial_dashboard') }}"><i class="fas fa-briefcase"></i>Nástěnka</a>
+            </li>
+            <li>
+                <a href="#authorSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-pencil-alt"></i>
+                    Autor
+                </a>
+                <ul class="collapse list-unstyled" id="authorSubmenu">
+                    <li>
+                        <a href="#">Vytvořit článek</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-tools"></i>
+                    Admin
+                </a>
+                <ul class="collapse list-unstyled" id="homeSubmenu">
+                    <li>
+                        <a href="#">Uživatelé</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+    </nav>
+
+    <div id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn btn-info">
+                    <i class="fas fa-align-left"></i>
+                    <span>Sidebar</span>
+                </button>
+                <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-align-justify"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ 'Username' }}
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">{{ 'Logout' }}</a>
+                                <a class="dropdown-item" href="#">{{ 'Change password' }}</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+
 <script src="{{ asset('bundles/editorial/js/jquery-3.3.1.slim.min.js') }}"></script>
-<script src="{{ asset('bundles/editorial/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('bundles/editorial/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('bundles/editorial/js/admin.js') }}"></script>
 </body>
 </html>
