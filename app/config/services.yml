@@ -14,3 +14,11 @@ services:
         # if you need to do this, you can override this setting on individual services
         public: false
 
+    EditorialBundle\:
+        resource: '../../src/EditorialBundle/*'
+        exclude: '../../src/EditorialBundle/{Entity,Repository,Tests}'
+
+    EditorialBundle\Controller\:
+        resource: '../../src/EditorialBundle/Controller'
+        public: true
+        tags: ['controller.service_arguments']

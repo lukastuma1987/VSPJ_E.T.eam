@@ -1,24 +1,32 @@
-# To get started with security, check out the documentation:
-# https://symfony.com/doc/current/security.html
 security:
+    encoders:
+        EditorialBundle\Entity\User:
+            algorithm: bcrypt
+            cost: 12
 
-    # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
-        in_memory:
-            memory: ~
+        editorial_provider:
+            entity:
+                class: EditorialBundle\Entity\User
+
+    role_hierarchy:
+        ROLE_CHIEF_EDITOR: ROLE_EDITOR
 
     firewalls:
-        # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
         main:
             anonymous: ~
-            # activate different ways to authenticate
+            logout_on_user_change: true
+            form_login:
+                login_path: login
+                check_path: login
+                default_target_path: editorial_dashboard
+            logout:
+                path: logout
+                target: homepage
 
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-            #http_basic: ~
-
-            # https://symfony.com/doc/current/security/form_login_setup.html
-            #form_login: ~
+    access_control:
+        - { path: '^/redakce', roles: [ROLE_AUTHOR, ROLE_REVIEWER, ROLE_EDITOR, ROLE_ADMIN] }

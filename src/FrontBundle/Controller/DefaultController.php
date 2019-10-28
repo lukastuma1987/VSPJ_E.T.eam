@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", methods={"GET"})
+     * @Route("/", name="homepage", methods={"GET"})
      */
     public function indexAction()
     {

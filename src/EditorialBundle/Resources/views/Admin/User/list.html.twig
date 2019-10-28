@@ -1,0 +1,39 @@
+{% extends '@Editorial/base.html.twig' %}
+
+{% block title %}Uživatelé{% endblock %}
+
+{% block content %}
+    <h1>{{ block('title') }}</h1>
+
+    <a href="{{ path('admin_user_new') }}" class="btn btn-primary mb-2">Nový uživatel</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Uživatelské jméno</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Role</th>
+                <th scope="col">Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <th scope="row">{{ user.id }}</th>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.displayRole }}</td>
+                    <td>
+                        <a href="{{ path('admin_user_edit', {id: user.id}) }}" class="btn btn-sm btn-success mb-1">Upravit</a>
+                        <form class="d-inline" action="{{ path('admin_user_delete', {id: user.id}) }}" method="post" onsubmit="return confirm('Jste si jistý')">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_user') }}">
+                            <button class="btn btn-sm btn-danger mb-1">Odstranit</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
