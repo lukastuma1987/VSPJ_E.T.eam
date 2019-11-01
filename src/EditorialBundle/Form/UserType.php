@@ -35,6 +35,7 @@ class UserType extends AbstractType
                 'second_options' => ['label' => 'Heslo znovu' . ($builder->getData() ? ' (nepovinné)' : '')],
             ])
             ->add('roles', EntityType::class, [
+                'label' => 'Role',
                 'class' => Role::class,
                 'choice_label' => 'name',
                 'multiple' => true,

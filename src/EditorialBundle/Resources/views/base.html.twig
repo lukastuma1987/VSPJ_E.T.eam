@@ -19,10 +19,13 @@
 
         <ul class="list-unstyled components">
             <li>
-                <a href="{{ path('editorial_dashboard') }}"><i class="fas fa-briefcase"></i>Nástěnka</a>
+                <a href="{{ path('editorial_dashboard') }}"><i class="fas fa-home"></i>Nástěnka</a>
             </li>
             {% if is_granted('ROLE_AUTHOR') %}
                 {{ include('@Editorial/Dashboard/Parts/authorSideNav.html.twig') }}
+            {% endif %}
+            {% if is_granted('ROLE_CHIEF_EDITOR') %}
+                {{ include('@Editorial/Dashboard/Parts/chiefEditorSideNav.html.twig') }}
             {% endif %}
             {% if is_granted('ROLE_ADMIN') %}
                 {{ include('@Editorial/Dashboard/Parts/adminSideNav.html.twig') }}

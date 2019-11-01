@@ -29,6 +29,13 @@ class ArticleVersion
     private $file;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="suffix", type="string", length=20)
+     */
+    private $suffix;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime")
@@ -107,5 +114,24 @@ class ArticleVersion
     public function getArticle()
     {
         return $this->article;
+    }
+
+    /**
+     * @param string $suffix
+     * @return ArticleVersion
+     */
+    public function setSuffix($suffix)
+    {
+        $this->suffix = $suffix;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSuffix()
+    {
+        return $this->suffix;
     }
 }

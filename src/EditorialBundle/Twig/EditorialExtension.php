@@ -16,6 +16,8 @@ class EditorialExtension extends AbstractExtension
 
     public function getOperation($entity)
     {
-        return $entity ? 'Upravit' : 'Vytvořit';
+        $exists = $entity && is_object($entity) && method_exists($entity, 'getId') && $entity->getId();
+
+        return $exists ? 'Upravit' : 'Vytvořit';
     }
 }

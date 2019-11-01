@@ -2,6 +2,7 @@
 
 namespace EditorialBundle\Controller;
 
+use EditorialBundle\Entity\Magazine;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -11,10 +12,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class DashboardController extends Controller
 {
     /**
-     * @Route("/", name="editorial_dashboard",methods={"GET"})
+     * @Route("/", name="editorial_dashboard", methods={"GET"})
      */
     public function dashboardAction()
     {
-        return $this->render('@Editorial/Dashboard/dashboard.html.twig');
+        $repository = $this->getDoctrine()->getRepository(Magazine::class);
+        /** @var Magazine[] $magazines */
+        $magazines = $repository->findUpcoming();
+
+        return $this->render('@Editorial/Dashboard/dashboard.html.twig', [
+            'magazines' => $magazines,
+        ]);
     }
 }

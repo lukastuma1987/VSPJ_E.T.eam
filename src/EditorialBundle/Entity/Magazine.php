@@ -4,6 +4,7 @@ namespace EditorialBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Magazine
@@ -26,6 +27,7 @@ class Magazine
      * @var \DateTime
      *
      * @ORM\Column(name="publishDate", type="datetime")
+     * @Assert\NotBlank(message="Zadejte datum vydání")
      */
     private $publishDate;
 
@@ -33,6 +35,7 @@ class Magazine
      * @var \DateTime
      *
      * @ORM\Column(name="deadlineDate", type="datetime")
+     * @Assert\NotBlank(message="Zadejte datum uzávěrky")
      */
     private $deadlineDate;
 
@@ -40,6 +43,8 @@ class Magazine
      * @var int
      *
      * @ORM\Column(name="year", type="integer")
+     * @Assert\NotBlank(message="Zadejte ročník časopisu")
+     * @Assert\Range(min="1", minMessage="Minimální hodnota je {{ limit }}")
      */
     private $year;
 
@@ -47,6 +52,13 @@ class Magazine
      * @var int
      *
      * @ORM\Column(name="number", type="integer")
+     * @Assert\NotBlank(message="Zadejte číslo časopisu")
+     * @Assert\Range(
+     *     min="1",
+     *     max="4",
+     *     minMessage="Minimální hodnota je {{ limit }}",
+     *     maxMessage="Maximální hodnota je {{ limit }}"
+     * )
      */
     private $number;
 
@@ -61,6 +73,7 @@ class Magazine
      * @var ArrayCollection|MagazineTopic[]
      *
      * @ORM\OneToMany(targetEntity="MagazineTopic", mappedBy="magazine", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @Assert\Valid()
      */
     private $topics;
 
@@ -77,6 +90,8 @@ class Magazine
         $this->topics = new ArrayCollection();
         $this->articles = new ArrayCollection();
         $this->created = new \DateTime();
+        $this->publishDate = new \DateTime();
+        $this->deadlineDate = new \DateTime();
     }
 
     /**
@@ -201,7 +216,7 @@ class Magazine
      */
     public function addTopic(MagazineTopic $topic)
     {
-        if (!$this->topics-contains($topic)) {
+        if (!$this->topics->contains($topic)) {
             $this->topics[] = $topic;
             $topic->setMagazine($this);
         }
@@ -217,7 +232,7 @@ class Magazine
      */
     public function removeTopic(MagazineTopic $topic)
     {
-        if ($this->topics-contains($topic)) {
+        if ($this->topics->contains($topic)) {
             $this->topics->removeElement($topic);
 
             if ($topic->setMagazine() === $this) {
@@ -275,5 +290,27 @@ class Magazine
     public function getArticles()
     {
         return $this->articles;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTopicsString()
+    {
+        $topics = [];
+
+        foreach ($this->topics as $topic) {
+            $topics[] = $topic->getTopic();
+        }
+
+        return implode(', ', $topics);
+    }
+
+    /**
+     * @return string
+     */
+    public function getChoiceName()
+    {
+        return sprintf("Ročník %d, číslo %d", $this->year, $this->number);
     }
 }

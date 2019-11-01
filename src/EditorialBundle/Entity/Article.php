@@ -4,6 +4,9 @@ namespace EditorialBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use EditorialBundle\Enum\ArticleStatus;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Article
@@ -26,6 +29,8 @@ class Article
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     * @Assert\NotBlank(message="Zadejte název článku")
+     * @Assert\Length(max="255", maxMessage="Maximální délka názvu je {{ limit }} znaků")
      */
     private $name;
 
@@ -54,6 +59,7 @@ class Article
      * @var ArrayCollection|ArticleAuthor[]
      *
      * @ORM\OneToMany(targetEntity="ArticleAuthor", mappedBy="article", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @Assert\Valid()
      */
     private $authors;
 
@@ -95,6 +101,7 @@ class Article
         $this->authors = new ArrayCollection();
         $this->reviewers = new ArrayCollection();
         $this->created = new \DateTime();
+        $this->status = ArticleStatus::class;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace EditorialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * MagazineTopic
@@ -25,6 +26,8 @@ class MagazineTopic
      * @var string
      *
      * @ORM\Column(name="topic", type="string", length=255)
+     * @Assert\NotBlank(message="Zadejte téma")
+     * @Assert\Length(max="255", maxMessage="Téma může mít maximálně {{ limit }} znaků")
      */
     private $topic;
 

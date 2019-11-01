@@ -1,0 +1,43 @@
+{% extends '@Editorial/base.html.twig' %}
+
+{% block title %}Čísla časopisu{% endblock %}
+
+{% block content %}
+    <h1>{{ block('title') }}</h1>
+
+    <a href="{{ path('chief_editor_magazine_new') }}" class="btn btn-primary mb-2">Nové číslo časopisu</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Ročník</th>
+                <th scope="col">Číslo</th>
+                <th scope="col">Témata</th>
+                <th scope="col">Datum vydání</th>
+                <th scope="col">Datum uzávěrky</th>
+                <th scope="col">Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for magazine in magazines %}
+            <tr>
+                <th scope="row">{{ magazine.id }}</th>
+                <td>{{ magazine.year }}</td>
+                <td>{{ magazine.number }}</td>
+                <td>{{ magazine.topicsString }}</td>
+                <td>{{ magazine.publishDate|date('Y F') }}</td>
+                <td>{{ magazine.deadlineDate|date('d. m. Y') }}</td>
+                <td>
+                    <a href="{{ path('chief_editor_magazine_edit', {id: magazine.id}) }}" class="btn btn-sm btn-success mb-1">Upravit</a>
+                    <form class="d-inline" action="{{ path('chief_editor_magazine_delete', {id: magazine.id}) }}" method="post" onsubmit="return confirm('Jste si jistý')">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_magazine') }}">
+                        <button class="btn btn-sm btn-danger mb-1">Odstranit</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

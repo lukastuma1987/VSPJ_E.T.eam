@@ -1,0 +1,42 @@
+{% extends '@Editorial/base.html.twig' %}
+{% form_theme form with [_self, 'bootstrap_4_layout.html.twig'] %}
+
+{% block title %}{{ magazine|operation }} číslo časopisu{% endblock %}
+
+{% block content %}
+    <h1>{{ block('title') }}</h1>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <a href="#" class="btn btn-primary add-item" data-list="#topic-list">Přidat téma</a>
+        <button class="btn btn-primary">{{ magazine|operation }}</button>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block _editorialbundle_magazine_topics_widget %}
+    {%- spaceless %}
+        <h4 class="mt-5">Témata</h4>
+        <div id="topic-list" data-prototype="{{ form_widget(prototype)|escape }}">
+            {% for child in form %}
+                {{ form_widget(child) }}
+                {{ form_errors(child) }}
+            {% endfor %}
+        </div>
+    {% endspaceless -%}
+{% endblock %}
+
+{% block editorialbundle_magazinetopic_widget %}
+    {%- spaceless %}
+        <div class="list-item">
+            <div class="row">
+                <div class="col-sm">
+                    {{ form_row(form.topic) }}
+                </div>
+                <div class="col-sm">
+                    <div class="form-group remove-item-group">
+                        <a href="#" class="remove-item btn btn-danger">Odebrat</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endspaceless -%}
+{% endblock %}
