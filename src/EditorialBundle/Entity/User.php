@@ -70,9 +70,33 @@ class User implements UserInterface, \Serializable
      */
     private $roles;
 
+    /**
+     * @var ArrayCollection|Article[]
+     *
+     * @ORM\OneToMany(targetEntity="Article", mappedBy="owner", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    private $authorArticles;
+
+    /**
+     * @var ArrayCollection|Article[]
+     *
+     * @ORM\OneToMany(targetEntity="Article", mappedBy="editor", cascade={"persist"})
+     */
+    private $editorArticles;
+
+    /**
+     * @var ArrayCollection|Article[]
+     *
+     * @ORM\ManyToMany(targetEntity="Article", mappedBy="reviewers", cascade={"persist", "remove"})
+     */
+    private $reviewerArticles;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
+        $this->authorArticles = new ArrayCollection();
+        $this->editorArticles = new ArrayCollection();
+        $this->reviewerArticles = new ArrayCollection();
     }
 
     /**
@@ -276,5 +300,92 @@ class User implements UserInterface, \Serializable
     public function getPlaintextPassword()
     {
         return $this->plaintextPassword;
+    }
+
+    public function addAuthorArticle(Article $article)
+    {
+        if (!$this->authorArticles->contains($article)) {
+            $this->authorArticles[] = $article;
+            $article->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAuthorArticle(Article $article)
+    {
+        if ($this->authorArticles->contains($article)) {
+            $this->authorArticles->removeElement($article);
+
+            if ($article->getOwner() === $this) {
+                $article->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|Article[]
+     */
+    public function getAuthorArticles()
+    {
+        return $this->authorArticles;
+    }
+
+    public function addEditorArticle(Article $article)
+    {
+        if (!$this->editorArticles->contains($article)) {
+            $this->editorArticles[] = $article;
+            $article->setEditor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEditorArticle(Article $article)
+    {
+        if ($this->editorArticles->contains($article)) {
+            $this->editorArticles->removeElement($article);
+
+            if ($article->getEditor() === $this) {
+                $article->setEditor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|Article[]
+     */
+    public function getEditorArticles()
+    {
+        return $this->editorArticles;
+    }
+
+    public function addReviewerArticle(Article $article)
+    {
+        if (!$this->reviewerArticles->contains($article)) {
+            $this->reviewerArticles[] = $article;
+            $article->addReviewer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReviewerArticle(Article $article)
+    {
+        if ($this->reviewerArticles->contains($article)) {
+            $this->reviewerArticles->removeElement($article);
+            $article->removeReviewer($this);
+        }
+
+        return $this;
+    }
+
+    public function getReviewerArticles()
+    {
+        return $this->reviewerArticles;
     }
 }
