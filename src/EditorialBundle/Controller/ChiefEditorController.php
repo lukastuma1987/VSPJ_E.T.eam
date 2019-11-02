@@ -71,6 +71,8 @@ class ChiefEditorController extends Controller
 
         if (count($magazine->getArticles())) {
             $this->addFlash('warning', 'Číslo časopisu již obsahuje články v recenzním řízení.');
+            
+            return $this->redirectToRoute('chief_editor_magazine_list');
         }
 
         $id = $magazine->getId();
