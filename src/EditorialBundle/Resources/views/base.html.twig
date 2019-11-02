@@ -25,6 +25,9 @@
                 {{ include('@Editorial/Dashboard/Parts/authorSideNav.html.twig') }}
             {% endif %}
             {% if is_granted('ROLE_CHIEF_EDITOR') %}
+                {{ include('@Editorial/Dashboard/Parts/editorSideNav.html.twig') }}
+            {% endif %}
+            {% if is_granted('ROLE_CHIEF_EDITOR') %}
                 {{ include('@Editorial/Dashboard/Parts/chiefEditorSideNav.html.twig') }}
             {% endif %}
             {% if is_granted('ROLE_ADMIN') %}

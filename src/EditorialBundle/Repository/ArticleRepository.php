@@ -5,6 +5,7 @@ namespace EditorialBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use EditorialBundle\Entity\Magazine;
+use EditorialBundle\Entity\User;
 
 class ArticleRepository extends EntityRepository
 {
@@ -22,5 +23,24 @@ class ArticleRepository extends EntityRepository
         } catch (NonUniqueResultException $e) {
             return 0;
         }
+    }
+
+    public function findUnassigned()
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.editor IS NULL')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findByEditor(User $editor)
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.editor = :editor')
+            ->setParameter('editor', $editor)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }
