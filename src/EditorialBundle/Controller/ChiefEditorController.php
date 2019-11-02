@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/redakce/sefredaktor")
- * @Security("has_role('RROLE_CHIEF_EDITOR')")
+ * @Security("has_role('ROLE_CHIEF_EDITOR')")
  */
 class ChiefEditorController extends Controller
 {
