@@ -12,6 +12,15 @@ class DefaultControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/');
 
-        $this->assertContains('Hello World', $client->getResponse()->getContent());
+        $this->assertContains('Logos Polytechnikos', $client->getResponse()->getContent());
+    }
+
+    public function testCislaCasopisu()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', '/cisla-casopisu');
+
+        $this->assertContains('Čísla časopisu', $client->getResponse()->getContent());
     }
 }

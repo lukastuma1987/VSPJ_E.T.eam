@@ -4,10 +4,13 @@
 namespace EditorialBundle\Controller;
 
 use EditorialBundle\Entity\Magazine;
+use EditorialBundle\Factory\ResponseFactory;
 use EditorialBundle\Form\MagazineType;
+use EditorialBundle\Form\MagazineUploadType;
 use EditorialBundle\Repository\MagazineRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -34,7 +37,7 @@ class ChiefEditorController extends Controller
 
     /**
      * @Route("/nove-cislo-casopisu", name="chief_editor_magazine_new", methods={"GET", "POST"})
-     * @Route("/{id}/upravit-cislo-casopisu", name="chief_editor_magazine_edit", methods={"GET", "POST"})
+     * @Route("/cislo-casopisu-{id}/upravit", name="chief_editor_magazine_edit", methods={"GET", "POST"})
      */
     public function editAction(Request $request, Magazine $magazine = null)
     {
@@ -59,7 +62,7 @@ class ChiefEditorController extends Controller
     }
 
     /**
-     * @Route("/{id}/smazat", name="chief_editor_magazine_delete", methods={"DELETE"})
+     * @Route("/cislo-casopisu-{id}/smazat", name="chief_editor_magazine_delete", methods={"DELETE"})
      */
     public function deleteAction(Request $request, Magazine $magazine)
     {
@@ -91,5 +94,49 @@ class ChiefEditorController extends Controller
         ));
 
         return $this->redirectToRoute('chief_editor_magazine_list');
+    }
+
+    /**
+     * @Route("/cislo-casopisu-{id}/nahrat", name="chief_editor_magazine_upload", methods={"GET", "POST"})
+     */
+    public function uploadMagazineAction(Request $request, Magazine $magazine)
+    {
+        $form = $this->createForm(MagazineUploadType::class, $magazine);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $file */
+            $file = $form['file']->getData();;
+
+            if ($file && $file->isValid()) {
+                $stream = fopen($file->getRealPath(),'rb');
+                $magazine->setFile(stream_get_contents($stream));
+                $magazine->setSuffix($file->getClientOriginalExtension());
+
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+
+                return $this->redirectToRoute('chief_editor_magazine_list');
+            }
+
+            $this->addFlash('danger', $file->getErrorMessage());
+        }
+
+        return $this->render('@Editorial/ChiefEditor/Magazine/upload.html.twig', [
+            'form' => $form->createView(),
+            'magazine' => $magazine,
+        ]);
+    }
+
+    /**
+     * @Route("/cislo-casopisu-{id}/stahnout", name="chief_editor_magazine_download", methods={"GET"})
+     */
+    public function downloadArticleAction(Magazine $magazine)
+    {
+        if (!$magazine->getFile()) {
+            throw $this->createNotFoundException('Číslo časopisu není nahráno');
+        }
+
+        return ResponseFactory::createMagazineFileResponse($magazine);
     }
 }

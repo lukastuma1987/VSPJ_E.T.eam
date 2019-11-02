@@ -41,7 +41,7 @@ class ArticleType extends AbstractType
                 'label' => 'Článek',
                 'mapped' => false,
                 'constraints' => [
-                    new File(['maxSize' => '20M', 'maxSizeMessage' => 'Maximální velikost je 20MB']),
+                    new File(['maxSize' => '2M', 'maxSizeMessage' => 'Maximální velikost je 2MB']),
                     new NotBlank(['message' => 'Vyberte soubor se článkem']),
                 ],
             ])
