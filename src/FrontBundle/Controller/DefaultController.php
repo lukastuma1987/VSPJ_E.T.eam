@@ -14,4 +14,12 @@ class DefaultController extends Controller
     {
         return $this->render('@Front/Default/index.html.twig');
     }
+
+    /**
+     * @Route("/o-casopise", name="o-casopise", methods={"GET"})
+     */
+    public function oCasopiseAction()
+    {
+        return $this->render('@Front/Default/oCasopise.html.twig');
+    }
 }
