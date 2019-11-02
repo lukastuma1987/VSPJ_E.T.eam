@@ -13,6 +13,7 @@
                 <th scope="col">Témata</th>
                 <th scope="col">Datum vydání</th>
                 <th scope="col">Datum uzávěrky</th>
+                <th scope="col">Počet článků v recenzním řízení</th>
             </tr>
         </thead>
         <tbody>
@@ -23,6 +24,7 @@
                 <td>{{ magazine.topicsString }}</td>
                 <td>{{ magazine.publishDate|date('F Y') }}</td>
                 <td>{{ magazine.deadlineDate|date('d. m. Y') }}</td>
+                <td>{{ magazine|countArticles }}</td>
             </tr>
         {% endfor %}
         </tbody>
