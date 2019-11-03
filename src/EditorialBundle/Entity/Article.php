@@ -101,7 +101,7 @@ class Article
         $this->authors = new ArrayCollection();
         $this->reviewers = new ArrayCollection();
         $this->created = new \DateTime();
-        $this->status = ArticleStatus::class;
+        $this->status = ArticleStatus::STATUS_NEW;
     }
 
     /**
@@ -339,5 +339,34 @@ class Article
     public function getReviewers()
     {
         return $this->reviewers;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMagazineChoiceName()
+    {
+        if ($this->magazine) {
+            return $this->magazine->getChoiceName();
+        }
+
+        return '';
+    }
+
+    /**
+     * @return ArticleVersion|null
+     */
+    public function getLastVersion()
+    {
+        return $this->versions->isEmpty() ? null : $this->versions->last();
+    }
+
+    public function getOwnerInfo()
+    {
+        if ($owner = $this->owner) {
+            return sprintf('%s (%s)', $owner->getUsername(), $owner->getEmail());
+        }
+
+        return '';
     }
 }

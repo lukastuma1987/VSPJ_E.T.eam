@@ -90,6 +90,7 @@ i, span {
 
 #sidebar.active ul ul a {
     padding: 10px !important;
+    overflow: hidden;
 }
 
 #sidebar.active .dropdown-toggle::after {
@@ -160,6 +161,16 @@ i, span {
     padding: 20px;
     min-height: 100vh;
     transition: all 0.3s;
+}
+
+.status-new {
+    font-weight: bold;
+    color: rgb(52, 168, 213);
+}
+
+.status-assigned {
+    font-weight: bold;
+    color: #856404;
 }
 
 @media (max-width: 768px) {

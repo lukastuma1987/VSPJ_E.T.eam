@@ -1,0 +1,38 @@
+{% extends '@Editorial/base.html.twig' %}
+
+{% block title %}Nepřiřazené články{% endblock %}
+
+{% block content %}
+    <h1>{{ block('title') }}</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Název článku</th>
+                <th scope="col">Vlastník</th>
+                <th scope="col">Číslo časopisu</th>
+                <th scope="col">Status</th>
+                <th scope="col">Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+                <tr>
+                    <th scope="row">{{ article.id }}</th>
+                    <td>{{ article.name }}</td>
+                    <td>{{ article.ownerInfo }}</td>
+                    <td>{{ article.magazineChoiceName }}</td>
+                    <td class="status-{{ article|statusClass }}">{{ article|statusName }}</td>
+                    <td>
+                        <a href="{{ path('editor_article_download', {id: article.id}) }}" class="btn btn-sm btn-primary mb-1">Stáhnout</a>
+                        <form class="d-inline" action="{{ path('editor_article_assign', {id: article.id}) }}" method="post">
+                            <input type="hidden" name="_token" value="{{ csrf_token('assign_article') }}">
+                            <button class="btn btn-sm btn-success mb-1">Začít recenzní řízení</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
