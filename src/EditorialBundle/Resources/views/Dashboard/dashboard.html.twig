@@ -24,7 +24,7 @@
                 <td>{{ magazine.topicsString }}</td>
                 <td>{{ magazine.publishDate|date('F Y') }}</td>
                 <td>{{ magazine.deadlineDate|date('d. m. Y') }}</td>
-                <td>{{ magazine|countArticles }}</td>
+                <td>{{ magazine|countArticlesInReview }}</td>
             </tr>
         {% endfor %}
         </tbody>

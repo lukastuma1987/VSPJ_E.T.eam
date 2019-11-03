@@ -24,6 +24,7 @@ class EditorialExtension extends AbstractExtension
         return [
             new TwigFilter('operation', [$this, 'getOperation']),
             new TwigFilter('countArticles', [$this, 'getArticlesCount']),
+            new TwigFilter('countArticlesInReview', [$this, 'getArticlesInReviewCount']),
             new TwigFilter('statusName', [$this, 'getStatusName']),
             new TwigFilter('statusClass', [$this, 'getStatusClass']),
         ];
@@ -41,6 +42,13 @@ class EditorialExtension extends AbstractExtension
         $repository = $this->doctrine->getRepository(Article::class);
 
         return $repository->countByMagazine($magazine);
+    }
+
+    public function getArticlesInReviewCount(Magazine $magazine)
+    {
+        $repository = $this->doctrine->getRepository(Article::class);
+
+        return $repository->countInReviewByMagazine($magazine);
     }
 
     public function getStatusName(Article $article)

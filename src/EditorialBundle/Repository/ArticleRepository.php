@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use EditorialBundle\Entity\Magazine;
 use EditorialBundle\Entity\User;
+use EditorialBundle\Enum\ArticleStatus;
 
 class ArticleRepository extends EntityRepository
 {
@@ -42,5 +43,23 @@ class ArticleRepository extends EntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function countInReviewByMagazine(Magazine $magazine)
+    {
+        $query = $this->createQueryBuilder('a')
+            ->select('count(a)')
+            ->where('a.magazine = :magazine')
+            ->andWhere('a.status >= :assigned')
+            ->setParameter('magazine', $magazine)
+            ->setParameter('assigned', ArticleStatus::STATUS_ASSIGNED)
+            ->getQuery()
+        ;
+
+        try {
+            return $query->getSingleScalarResult();
+        } catch (NonUniqueResultException $e) {
+            return 0;
+        }
     }
 }
