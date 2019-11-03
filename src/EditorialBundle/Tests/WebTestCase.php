@@ -20,6 +20,8 @@ abstract class WebTestCase extends BaseWebTestCase
             'users_roles',
             'users',
             'roles',
+            'articles',
+            'magazines',
         ];
 
         /** @var \Doctrine\DBAL\Connection $conn */

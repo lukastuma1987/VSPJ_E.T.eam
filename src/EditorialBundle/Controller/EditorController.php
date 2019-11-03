@@ -71,6 +71,7 @@ class EditorController extends Controller
         /** @var User $user */
         $user = $this->getUser();
         $editor = $article->getEditor();
+        $owner = $article->getOwner();
 
         if (!$this->isCsrfTokenValid('assign_article', $request->get('_token'))) {
             $this->addFlash('danger', 'Neplatný CSRF token. Zkuste to prosím znovu.');
@@ -86,14 +87,20 @@ class EditorController extends Controller
             return $this->redirectToRoute('editor_unassigned_articles_list');
         }
 
+        if ($owner === $user) {
+            $this->addFlash('warning', 'Nemůžete dělat recenzní řízení pro své články.');
+
+            return $this->redirectToRoute('editor_unassigned_articles_list');
+        }
+
         $article->setEditor($user);
         $article->setStatus(ArticleStatus::STATUS_ASSIGNED);
 
         $em = $this->getDoctrine()->getManager();
         $em->flush();
 
-        $this->addFlash('success', 'Článek Vám byl úspěšně přiřazen. Recenzní řízení začalo');
-        // ToDo send email
+        $this->addFlash('success', 'Článek Vám byl úspěšně přiřazen. Recenzní řízení začalo.');
+        // ToDo odeslat email autorovi
 
         return $this->redirectToRoute('editor_articles_assigned_to_editor_list');
     }
