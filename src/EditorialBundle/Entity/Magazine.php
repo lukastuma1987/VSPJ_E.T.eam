@@ -70,6 +70,20 @@ class Magazine
     private $created;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="file", type="blob", nullable=true)
+     */
+    private $file;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="suffix", type="string", length=20, nullable=true)
+     */
+    private $suffix;
+
+    /**
      * @var ArrayCollection|MagazineTopic[]
      *
      * @ORM\OneToMany(targetEntity="MagazineTopic", mappedBy="magazine", cascade={"persist", "remove"}, orphanRemoval=true)
@@ -312,5 +326,48 @@ class Magazine
     public function getChoiceName()
     {
         return sprintf("Ročník %d, číslo %d", $this->year, $this->number);
+    }
+
+    /**
+     * Set file.
+     *
+     * @param string $file
+     *
+     * @return Magazine
+     */
+    public function setFile($file)
+    {
+        $this->file = $file;
+
+        return $this;
+    }
+
+    /**
+     * Get file.
+     *
+     * @return string
+     */
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    /**
+     * @param string $suffix
+     * @return Magazine
+     */
+    public function setSuffix($suffix)
+    {
+        $this->suffix = $suffix;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSuffix()
+    {
+        return $this->suffix;
     }
 }
