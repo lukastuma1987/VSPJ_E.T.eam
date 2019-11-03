@@ -360,4 +360,13 @@ class Article
     {
         return $this->versions->isEmpty() ? null : $this->versions->last();
     }
+
+    public function getOwnerInfo()
+    {
+        if ($owner = $this->owner) {
+            return sprintf('%s (%s)', $owner->getUsername(), $owner->getEmail());
+        }
+
+        return '';
+    }
 }

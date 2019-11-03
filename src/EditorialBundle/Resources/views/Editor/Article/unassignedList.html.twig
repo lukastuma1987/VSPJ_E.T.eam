@@ -10,6 +10,7 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Název článku</th>
+                <th scope="col">Vlastník</th>
                 <th scope="col">Číslo časopisu</th>
                 <th scope="col">Status</th>
                 <th scope="col">Akce</th>
@@ -20,6 +21,7 @@
                 <tr>
                     <th scope="row">{{ article.id }}</th>
                     <td>{{ article.name }}</td>
+                    <td>{{ article.ownerInfo }}</td>
                     <td>{{ article.magazineChoiceName }}</td>
                     <td class="status-{{ article|statusClass }}">{{ article|statusName }}</td>
                     <td>
