@@ -14,3 +14,7 @@ Pokud jste při instalaci závislostí nevyplnili/špatně zadali připojení k 
 * PHP verze 7.2 a vyšší
 * Databázový server MariaDB nebo MySQL
 * Pro produkční prostředí server Apache nebo Nginx
+
+## Vytvoření uživatele s administrátorskými právy
+
+`php bin/console et:create-admin-user`

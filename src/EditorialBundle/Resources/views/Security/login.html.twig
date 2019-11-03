@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="cs">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{{ asset('bundles/editorial/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/editorial/fontawesome/css/all.min.css') }}">
+    <title>Login</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-sm-4 m-auto text-center">
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+                <form action="{{ path('login') }}" method="post">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="username_label">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <input type="text" name="_username" class="form-control" placeholder="Uživatelské jméno nebo e-mail" aria-label="Uživatelské jméno nebo e-mail" aria-describedby="username_label" value="{{ lastUsername }}" required>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="password_label">
+                                <i class="fas fa-key"></i>
+                            </span>
+                        </div>
+                        <input type="password" name="_password" class="form-control" placeholder="Heslo" aria-label="Heslo" aria-describedby="password_label" required>
+                    </div>
+
+                    <button class="btn btn-primary" type="submit">Přihlásit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="{{ asset('bundles/editorial/js/jquery-3.3.1.slim.min.js') }}"></script>
+    <script src="{{ asset('bundles/editorial/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

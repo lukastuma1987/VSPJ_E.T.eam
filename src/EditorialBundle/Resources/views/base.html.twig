@@ -3,13 +3,53 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="{{ asset('bundles/editorial/css/bootstrap.min.css') }}">
-
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('bundles/editorial/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/editorial/fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/editorial/css/admin.css') }}">
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-<div class="container">{% block content %}{% endblock %}</div>
+<div class="wrapper">
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3>Logos Polytechnikos</h3>
+            <strong>LP</strong>
+        </div>
+
+        <ul class="list-unstyled components">
+            <li>
+                <a href="{{ path('editorial_dashboard') }}"><i class="fas fa-home"></i>Nástěnka</a>
+            </li>
+            {% if is_granted('ROLE_AUTHOR') %}
+                {{ include('@Editorial/Dashboard/Parts/authorSideNav.html.twig') }}
+            {% endif %}
+            {% if is_granted('ROLE_CHIEF_EDITOR') %}
+                {{ include('@Editorial/Dashboard/Parts/chiefEditorSideNav.html.twig') }}
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN') %}
+                {{ include('@Editorial/Dashboard/Parts/adminSideNav.html.twig') }}
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div id="content">
+        {{ include('@Editorial/Dashboard/Parts/topNav.html.twig') }}
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
 <script src="{{ asset('bundles/editorial/js/jquery-3.3.1.slim.min.js') }}"></script>
-<script src="{{ asset('bundles/editorial/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('bundles/editorial/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('bundles/editorial/js/admin.js') }}"></script>
 </body>
 </html>

@@ -1,0 +1,55 @@
+{% extends '@Editorial/base.html.twig' %}
+{% form_theme form with [_self, 'bootstrap_4_layout.html.twig'] %}
+
+{% block title %}Vytvořit článek{% endblock %}
+
+{% block content %}
+    <h1>{{ block('title') }}</h1>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <a href="#" class="btn btn-primary add-item" data-list="#author-list">Přidat autora</a>
+        <button class="btn btn-primary">Vytvořit</button>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block _editorialbundle_article_authors_widget %}
+    {%- apply spaceless %}
+        <h4 class="mt-5 mb-2">Autoři</h4>
+        <div id="author-list" data-prototype="{{ form_widget(prototype)|escape }}">
+            {% for child in form %}
+                {{ form_widget(child) }}
+                {{ form_errors(child) }}
+            {% endfor %}
+        </div>
+    {% endapply -%}
+{% endblock %}
+
+{% block editorialbundle_articleauthor_widget %}
+    {%- apply spaceless %}
+        <div class="list-item">
+            <div class="row">
+                <div class="col-sm">
+                    {{ form_row(form.fullName) }}
+                </div>
+                <div class="col-sm">
+                    {{ form_row(form.email) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    {{ form_row(form.workplace) }}
+                </div>
+                <div class="col-sm">
+                    {{ form_row(form.address) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="form-group remove-item-group">
+                        <a href="#" class="remove-item btn btn-danger">Odebrat</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endapply -%}
+{% endblock %}
