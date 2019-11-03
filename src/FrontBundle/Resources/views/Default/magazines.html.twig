@@ -1,0 +1,13 @@
+{% extends '@Front/base.html.twig' %}
+
+{% block title %}Čísla časopisu{% endblock %}
+
+{% block body %}
+    <h1>Čísla časopisu</h1>
+    <ul>
+        {% for magazine in magazines %}
+            <li><a href="{{ path('stahnout_casopis', {id: magazine.id}) }}">Ročník {{ magazine.year }}, číslo {{ magazine.number }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
