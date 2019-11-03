@@ -51,6 +51,8 @@ class AuthorController extends Controller
                 $em->persist($article);
                 $em->flush();
 
+                // ToDo odeslat email redaktorum
+
                 $this->addFlash('success', 'Článek byl úspěšně vytvořen.');
 
                 return $this->redirectToRoute('editorial_dashboard');

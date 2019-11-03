@@ -18,3 +18,10 @@ Pokud jste při instalaci závislostí nevyplnili/špatně zadali připojení k 
 ## Vytvoření uživatele s administrátorskými právy
 
 `php bin/console et:create-admin-user`
+
+## Spuštění testů
+
+* `php bin/console --env=test doctrine:database:create` (pokud ji nemáte databázi pro testorvání již vytvořenou)
+* `php bin/console --env=test doctrine:schema:update --force`
+* `vendor\bin\simple-phpunit.bat` - Windows
+* `vendor/bin/simple-phpunit` - Linux
