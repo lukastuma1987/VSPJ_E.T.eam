@@ -8,8 +8,10 @@ use EditorialBundle\Entity\ArticleAuthor;
 use EditorialBundle\Entity\ArticleVersion;
 use EditorialBundle\Entity\User;
 use EditorialBundle\Form\ArticleType;
+use EditorialBundle\Util\FileNameUtil;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,7 +44,6 @@ class AuthorController extends Controller
 
             if ($file && $file->isValid()) {
                 $version = new ArticleVersion();
-                $version->setFile(file_get_contents($file->getPathname()));
                 $version->setSuffix($file->getClientOriginalExtension());
 
                 $article->addVersion($version);
@@ -50,6 +51,14 @@ class AuthorController extends Controller
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($article);
                 $em->flush();
+
+                try {
+                    $fileName = FileNameUtil::getArticleVersionFileName($version);
+                    $file->move($this->getParameter('article_directory'), $fileName);
+                } catch (FileException $exception) {
+                    $this->addFlash('danger', $exception->getMessage());
+                    return $this->redirectToRoute('editorial_dashboard');
+                }
 
                 // ToDo odeslat email redaktorum
 

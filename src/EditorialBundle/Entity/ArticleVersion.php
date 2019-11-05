@@ -24,13 +24,6 @@ class ArticleVersion
     /**
      * @var string
      *
-     * @ORM\Column(name="file", type="blob")
-     */
-    private $file;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="suffix", type="string", length=20)
      */
     private $suffix;
@@ -63,30 +56,6 @@ class ArticleVersion
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set file.
-     *
-     * @param string $file
-     *
-     * @return ArticleVersion
-     */
-    public function setFile($file)
-    {
-        $this->file = $file;
-
-        return $this;
-    }
-
-    /**
-     * Get file.
-     *
-     * @return string
-     */
-    public function getFile()
-    {
-        return $this->file;
     }
 
     /**

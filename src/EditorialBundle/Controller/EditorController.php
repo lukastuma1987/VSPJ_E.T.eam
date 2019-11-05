@@ -54,13 +54,13 @@ class EditorController extends Controller
     /**
      * @Route("/clanek-{id}/stahnout", name="editor_article_download", methods={"GET"})
      */
-    public function downloadArticleAction(Article $article)
+    public function downloadArticleAction(Article $article, ResponseFactory $responseFactory)
     {
         if (!$article->getLastVersion()) {
             throw $this->createNotFoundException('Článek neobsahuje verzi');
         }
 
-        return ResponseFactory::createArticleFileResponse($article);
+        return $responseFactory->createArticleFileResponse($article);
     }
 
     /**

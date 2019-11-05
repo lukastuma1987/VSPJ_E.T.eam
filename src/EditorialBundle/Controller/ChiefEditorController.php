@@ -8,8 +8,11 @@ use EditorialBundle\Factory\ResponseFactory;
 use EditorialBundle\Form\MagazineType;
 use EditorialBundle\Form\MagazineUploadType;
 use EditorialBundle\Repository\MagazineRepository;
+use EditorialBundle\Util\FileNameUtil;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -64,7 +67,7 @@ class ChiefEditorController extends Controller
     /**
      * @Route("/cislo-casopisu-{id}/smazat", name="chief_editor_magazine_delete", methods={"DELETE"})
      */
-    public function deleteAction(Request $request, Magazine $magazine)
+    public function deleteAction(Request $request, Magazine $magazine, Filesystem $filesystem)
     {
         if (!$this->isCsrfTokenValid('delete_magazine', $request->get('_token'))) {
             $this->addFlash('danger', 'Neplatný CSRF token. Zkuste to prosím znovu');
@@ -81,6 +84,9 @@ class ChiefEditorController extends Controller
         $id = $magazine->getId();
         $year = $magazine->getYear();
         $number = $magazine->getNumber();
+        $fileName = FileNameUtil::getMagazineFileName($magazine);
+
+        $filesystem->remove($this->getParameter('magazine_directory') . '/' . $fileName);
 
         $em = $this->getDoctrine()->getManager();
         $em->remove($magazine);
@@ -109,12 +115,18 @@ class ChiefEditorController extends Controller
             $file = $form['file']->getData();;
 
             if ($file && $file->isValid()) {
-                $stream = fopen($file->getRealPath(),'rb');
-                $magazine->setFile(stream_get_contents($stream));
                 $magazine->setSuffix($file->getClientOriginalExtension());
 
                 $em = $this->getDoctrine()->getManager();
                 $em->flush();
+
+                try {
+                    $fileName = FileNameUtil::getMagazineFileName($magazine);
+                    $file->move($this->getParameter('magazine_directory'), $fileName);
+                } catch (FileException $exception) {
+                    $this->addFlash('danger', $exception->getMessage());
+                    return $this->redirectToRoute('chief_editor_magazine_list');
+                }
 
                 return $this->redirectToRoute('chief_editor_magazine_list');
             }
@@ -131,12 +143,12 @@ class ChiefEditorController extends Controller
     /**
      * @Route("/cislo-casopisu-{id}/stahnout", name="chief_editor_magazine_download", methods={"GET"})
      */
-    public function downloadArticleAction(Magazine $magazine)
+    public function downloadArticleAction(Magazine $magazine, ResponseFactory $responseFactory)
     {
-        if (!$magazine->getFile()) {
+        if (!$magazine->getSuffix()) {
             throw $this->createNotFoundException('Číslo časopisu není nahráno');
         }
 
-        return ResponseFactory::createMagazineFileResponse($magazine);
+        return $responseFactory->createMagazineFileResponse($magazine);
     }
 }

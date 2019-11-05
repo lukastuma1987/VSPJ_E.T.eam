@@ -72,13 +72,6 @@ class Magazine
     /**
      * @var string
      *
-     * @ORM\Column(name="file", type="blob", nullable=true)
-     */
-    private $file;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="suffix", type="string", length=20, nullable=true)
      */
     private $suffix;
@@ -326,30 +319,6 @@ class Magazine
     public function getChoiceName()
     {
         return sprintf("Ročník %d, číslo %d", $this->year, $this->number);
-    }
-
-    /**
-     * Set file.
-     *
-     * @param string $file
-     *
-     * @return Magazine
-     */
-    public function setFile($file)
-    {
-        $this->file = $file;
-
-        return $this;
-    }
-
-    /**
-     * Get file.
-     *
-     * @return string
-     */
-    public function getFile()
-    {
-        return $this->file;
     }
 
     /**

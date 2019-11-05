@@ -38,11 +38,14 @@ class DefaultController extends Controller
      */
     public function magazineDownload(Magazine $magazine)
     {
-        if (!$magazine->getFile()) {
+        if (!$magazine->getSuffix()) {
             throw $this->createNotFoundException('Číslo časopisu není nahráno');
         }
 
-        return ResponseFactory::createMagazineFileResponse($magazine);
+        /** @var ResponseFactory $responseFactory */
+        $responseFactory = $this->get(ResponseFactory::class);
+
+        return $responseFactory->createMagazineFileResponse($magazine);
     }
 
     /**

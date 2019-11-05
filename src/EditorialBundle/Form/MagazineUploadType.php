@@ -22,7 +22,7 @@ class MagazineUploadType extends AbstractType
                 'label' => 'Číslo časopisu',
                 'mapped' => false,
                 'constraints' => [
-                    new File(['maxSize' => '2M', 'maxSizeMessage' => 'Maximální velikost je 2MB']),
+                    new File(['maxSize' => '20M', 'maxSizeMessage' => 'Maximální velikost je 20MB']),
                     new NotBlank(['message' => 'Vyberte soubor s číslem časopisu']),
                 ],
             ])
