@@ -28,3 +28,8 @@ services:
         arguments:
             $articleDirectory: '%article_directory%'
             $magazineDirectory: '%magazine_directory%'
+
+    EditorialBundle\Factory\EmailFactory:
+        arguments:
+            $mailerUser: '%mailer_user%'
+            $doctrine: '@doctrine'

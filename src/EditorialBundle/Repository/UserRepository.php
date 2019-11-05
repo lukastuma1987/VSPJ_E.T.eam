@@ -55,4 +55,16 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
             return null;
         }
     }
+
+    public function findEditors()
+    {
+        return $this->createQueryBuilder('u')
+            ->join('u.roles', 'r')
+            ->where('r.role = :roleEditor OR r.role = :roleChiefEditor')
+            ->setParameter('roleEditor', 'ROLE_EDITOR')
+            ->setParameter('roleChiefEditor', 'ROLE_CHIEF_EDITOR')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
