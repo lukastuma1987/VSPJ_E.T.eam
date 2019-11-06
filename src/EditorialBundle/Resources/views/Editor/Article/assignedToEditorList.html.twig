@@ -24,6 +24,9 @@
                 <td class="status-{{ article|statusClass }}">{{ article|statusName }}</td>
                 <td>
                     <a href="{{ path('editor_article_download', {id: article.id}) }}" class="btn btn-sm btn-primary mb-1">Stáhnout</a>
+                    {% if article.status is constant('EditorialBundle\\Enum\\ArticleStatus::STATUS_ASSIGNED') %}
+                        <a href="{{ path('editor_article_assign_reviewers', {id: article.id}) }}" class="btn btn-sm btn-info mb-1">Vybrat recenzenty</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

@@ -85,18 +85,18 @@ class User implements UserInterface, \Serializable
     private $editorArticles;
 
     /**
-     * @var ArrayCollection|Article[]
+     * @var ArrayCollection|Review[]
      *
-     * @ORM\ManyToMany(targetEntity="Article", mappedBy="reviewers", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Review", mappedBy="reviewer", cascade={"persist"})
      */
-    private $reviewerArticles;
+    private $reviews;
 
     public function __construct()
     {
         $this->roles = new ArrayCollection();
         $this->authorArticles = new ArrayCollection();
         $this->editorArticles = new ArrayCollection();
-        $this->reviewerArticles = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
     }
 
     /**
@@ -302,6 +302,10 @@ class User implements UserInterface, \Serializable
         return $this->plaintextPassword;
     }
 
+    /**
+     * @param Article $article
+     * @return User
+     */
     public function addAuthorArticle(Article $article)
     {
         if (!$this->authorArticles->contains($article)) {
@@ -312,6 +316,10 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
+    /**
+     * @param Article $article
+     * @return User
+     */
     public function removeAuthorArticle(Article $article)
     {
         if ($this->authorArticles->contains($article)) {
@@ -333,6 +341,10 @@ class User implements UserInterface, \Serializable
         return $this->authorArticles;
     }
 
+    /**
+     * @param Article $article
+     * @return User
+     */
     public function addEditorArticle(Article $article)
     {
         if (!$this->editorArticles->contains($article)) {
@@ -343,6 +355,10 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
+    /**
+     * @param Article $article
+     * @return User
+     */
     public function removeEditorArticle(Article $article)
     {
         if ($this->editorArticles->contains($article)) {
@@ -364,28 +380,47 @@ class User implements UserInterface, \Serializable
         return $this->editorArticles;
     }
 
-    public function addReviewerArticle(Article $article)
+    /**
+     * @param Review $review
+     * @return User
+     */
+    public function addReview(Review $review)
     {
-        if (!$this->reviewerArticles->contains($article)) {
-            $this->reviewerArticles[] = $article;
-            $article->addReviewer($this);
+        if (!$this->reviews->contains($review)) {
+            $this->reviews[] = $review;
+            $review->setReviewer($this);
         }
 
         return $this;
     }
 
-    public function removeReviewerArticle(Article $article)
+    /**
+     * @param Review $review
+     * @return User
+     */
+    public function removeReview(Review $review)
     {
-        if ($this->reviewerArticles->contains($article)) {
-            $this->reviewerArticles->removeElement($article);
-            $article->removeReviewer($this);
+        if ($this->reviews->contains($review)) {
+            $this->reviews->removeElement($review);
+
+            if ($review->getReviewer() === $this) {
+                $review->setReviewer($this);
+            }
         }
 
         return $this;
     }
 
-    public function getReviewerArticles()
+    /**
+     * @return ArrayCollection|Review[]
+     */
+    public function getReviews()
     {
-        return $this->reviewerArticles;
+        return $this->reviews;
+    }
+
+    public function getDisplayName()
+    {
+        return sprintf('%s (%s)', $this->username, $this->email);
     }
 }

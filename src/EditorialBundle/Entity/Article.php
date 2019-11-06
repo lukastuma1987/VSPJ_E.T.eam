@@ -87,18 +87,17 @@ class Article
     private $editor;
 
     /**
-     * @var ArrayCollection|User[]
+     * @var ArrayCollection|Review[]
      *
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="reviewerArticles", cascade={"persist", "remove"})
-     * @ORM\JoinTable(name="articles_users")
+     * @ORM\OneToMany(targetEntity="Review", mappedBy="article", cascade={"persist"})
      */
-    private $reviewers;
+    private $reviews;
 
     public function __construct()
     {
         $this->versions = new ArrayCollection();
         $this->authors = new ArrayCollection();
-        $this->reviewers = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
         $this->created = new \DateTime();
         $this->status = ArticleStatus::STATUS_NEW;
     }
@@ -305,39 +304,42 @@ class Article
     }
 
     /**
-     * @param User $reviewer
-     * @return $this
+     * @param Review $review
+     * @return Article
      */
-    public function addReviewer(User $reviewer)
+    public function addReview(Review $review)
     {
-        if (!$this->reviewers->contains($reviewer)) {
-            $this->reviewers[] = $reviewer;
-            $reviewer->addReviewerArticle($this);
+        if (!$this->reviews->contains($review)) {
+            $this->reviews[] = $review;
+            $review->setArticle($this);
         }
 
         return $this;
     }
 
     /**
-     * @param User $reviewer
-     * @return User
+     * @param Review $review
+     * @return Article
      */
-    public function removeReviewer(User $reviewer)
+    public function removeReview(Review $review)
     {
-        if ($this->reviewers->contains($reviewer)) {
-            $this->reviewers->removeElement($reviewer);
-            $reviewer->removeReviewerArticle($this);
+        if ($this->reviews->contains($review)) {
+            $this->reviews->removeElement($review);
+
+            if ($review->getArticle() === $this) {
+                $review->setArticle(null);
+            }
         }
 
-        return $reviewer;
+        return $this;
     }
 
     /**
-     * @return ArrayCollection|User[]
+     * @return ArrayCollection|Review[]
      */
-    public function getReviewers()
+    public function getReviews()
     {
-        return $this->reviewers;
+        return $this->reviews;
     }
 
     /**
