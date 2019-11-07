@@ -233,4 +233,16 @@ class Review
 
         return '';
     }
+
+    /**
+     * @return int|null
+     */
+    public function getArticleId()
+    {
+        if ($article = $this->getArticle()) {
+            return $article->getId();
+        }
+
+        return null;
+    }
 }

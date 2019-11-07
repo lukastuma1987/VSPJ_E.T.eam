@@ -18,7 +18,9 @@
             <tr>
                 <th scope="row">{{ review.articleName }}</th>
                 <td>{{ review.deadline|date('d. m. Y') }}</td>
-                <td></td>
+                <td>
+                    <a class="btn btn-primary" href="{{ path('reviewer_article_download', {id: review.articleId }) }}">Stáhnout</a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
