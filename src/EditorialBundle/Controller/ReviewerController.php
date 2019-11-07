@@ -2,7 +2,6 @@
 
 namespace EditorialBundle\Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\Review;
 use EditorialBundle\Entity\User;
@@ -45,7 +44,7 @@ class ReviewerController extends Controller
         $user = $this->getUser();
         /** @var UserRepository $repository */
         $repository = $this->getDoctrine()->getRepository(User::class);
-        /** @var ArrayCollection|User[] $reviewers */
+        /** @var User[] $reviewers */
         $reviewers = $repository->findReviewersByArticle($article);
 
         if (!in_array($user, $reviewers, true)) {

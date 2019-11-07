@@ -377,6 +377,18 @@ class Article
     /**
      * @return string
      */
+    public function getEditorInfo()
+    {
+        if ($editor = $this->getEditor()) {
+            return sprintf('%s (%s)', $editor->getUsername(), $editor->getEmail());
+        }
+
+        return '';
+    }
+
+    /**
+     * @return string
+     */
     public function getOwnerEmail()
     {
         if ($owner = $this->getOwner()) {
