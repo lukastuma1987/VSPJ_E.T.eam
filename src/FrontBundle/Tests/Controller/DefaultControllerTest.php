@@ -2,25 +2,44 @@
 
 namespace FrontBundle\Tests\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DefaultControllerTest extends WebTestCase
 {
-    public function testIndex()
+    /** @var Client */
+    private $client;
+
+    protected function setUp()
     {
-        $client = static::createClient();
-
-        $crawler = $client->request('GET', '/');
-
-        $this->assertContains('Logos Polytechnikos', $client->getResponse()->getContent());
+        parent::setUp();
+        $this->client = static::createClient();
     }
 
-    public function testCislaCasopisu()
+    protected function tearDown()
     {
-        $client = static::createClient();
+        $this->client = null;
+        parent::tearDown();
+    }
 
-        $crawler = $client->request('GET', '/cisla-casopisu');
+    /**
+     * @dataProvider providePageContains
+     */
+    public function testPageContains($uri, $expectedContent)
+    {
+        $crawler = $this->client->request('GET', $uri);
+        $response = $this->client->getResponse();
 
-        $this->assertContains('Čísla časopisu', $client->getResponse()->getContent());
+        $this->assertTrue($response->isOk());
+        $this->assertContains($expectedContent, $response->getContent());
+    }
+
+    public function providePageContains()
+    {
+        return [
+            ['/', 'Logos Polytechnikos'],
+            ['/cisla-casopisu', 'Čísla časopisu'],
+            ['/o-casopise', 'vysokoškolský odborný recenzovaný časopis'],
+        ];
     }
 }

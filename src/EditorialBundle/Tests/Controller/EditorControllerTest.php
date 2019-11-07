@@ -5,10 +5,10 @@ namespace EditorialBundle\Tests\Controller;
 use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\Magazine;
 use EditorialBundle\Entity\User;
+use EditorialBundle\Enum\ArticleStatus;
 use EditorialBundle\Repository\UserRepository;
 use EditorialBundle\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class EditorControllerTest extends WebTestCase
 {
@@ -34,29 +34,7 @@ class EditorControllerTest extends WebTestCase
 
     public function testAssignArticle()
     {
-        $container = $this->client->getContainer();
-        $em = $container->get('doctrine.orm.default_entity_manager');
-        /** @var UserRepository $repository */
-        $repository = $em->getRepository(User::class);
-        /** @var User $user */
-        $user = $repository->findOneBy(['username' => 'author']);
-
-        $tomorrow = new \DateTime();
-        $tomorrow->modify('+1 day');
-
-        $article = new Article();
-        $article->setOwner($user)->setName('Foo article');
-
-        $magazine = new Magazine();
-        $magazine->setDeadlineDate($tomorrow)
-            ->setPublishDate($tomorrow)
-            ->setNumber(1)
-            ->setYear(1)
-            ->addArticle($article)
-        ;
-
-        $em->persist($magazine);
-        $em->flush();
+        $this->prepareArticle();
 
         self::login($this->client, 'editor', 'editor');
 
@@ -80,5 +58,78 @@ class EditorControllerTest extends WebTestCase
         $this->assertTrue($response->isOk());
 
         $this->assertContains('Článek Vám byl úspěšně přiřazen. Recenzní řízení začalo.', $response->getContent());
+    }
+
+    public function testAssignReviewers()
+    {
+        $this->prepareArticle(ArticleStatus::STATUS_ASSIGNED, true);
+
+        self::login($this->client, 'editor', 'editor');
+
+        $crawler = $this->client->request('GET', '/redakce/redaktor/vypis-clanku-prirazenych-mne');
+        $response = $this->client->getResponse();
+
+        $this->assertTrue($response->isOk());
+        $this->assertContains('Foo article', $response->getContent());
+
+        $uri = $crawler->selectLink('Vybrat recenzenty')->link()->getUri();
+
+        $crawler = $this->client->request('GET', $uri);
+        $response = $this->client->getResponse();
+
+        $this->assertTrue($response->isOk());
+
+        $form = $crawler->filter('form button')->form();
+        $form['editorialbundle_assignreviewers[reviewers]']->select([2, 6]);
+
+        $crawler = $this->client->submit($form);
+        $response = $this->client->getResponse();
+
+        $this->assertTrue($response->isRedirection());
+
+        $crawler = $this->client->followRedirect();
+        $response = $this->client->getResponse();
+
+        $this->assertTrue($response->isOk());
+        $this->assertContains('Článek byl předán k hodnocení', $response->getContent());
+    }
+
+    // private
+
+    private function prepareArticle($articleStatus = false, $hasEditor = false)
+    {
+        $container = $this->client->getContainer();
+        $em = $container->get('doctrine.orm.default_entity_manager');
+        /** @var UserRepository $repository */
+        $repository = $em->getRepository(User::class);
+        /** @var User $author */
+        $author = $repository->findOneBy(['username' => 'author']);
+        /** @var User $editor */
+        $editor = $repository->findOneBy(['username' => 'editor']);
+
+        $tomorrow = new \DateTime();
+        $tomorrow->modify('+1 day');
+
+        $article = new Article();
+        $article->setOwner($author)->setName('Foo article');
+
+        if ($articleStatus !== false) {
+            $article->setStatus($articleStatus);
+        }
+
+        if ($hasEditor) {
+            $article->setEditor($editor);
+        }
+
+        $magazine = new Magazine();
+        $magazine->setDeadlineDate($tomorrow)
+            ->setPublishDate($tomorrow)
+            ->setNumber(1)
+            ->setYear(1)
+            ->addArticle($article)
+        ;
+
+        $em->persist($magazine);
+        $em->flush();
     }
 }

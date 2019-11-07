@@ -140,7 +140,7 @@ class EditorController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
-            $this->addFlash('success', 'Článek Vám byl úspěšně přiřazen. Recenzní řízení začalo.');
+            $this->addFlash('success', 'Článek byl předán k hodnocení.');
 
             $emailFactory->sendStatusChangedNotification($article);
 
