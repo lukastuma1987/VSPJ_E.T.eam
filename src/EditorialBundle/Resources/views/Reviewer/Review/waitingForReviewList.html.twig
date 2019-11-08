@@ -1,0 +1,26 @@
+{% extends '@Editorial/base.html.twig' %}
+
+{% block title %}Články čekající na vaše hodnocení{% endblock %}
+
+{% block content %}
+    <h1>{{ block('title') }}</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Název článku</th>
+                <th scope="col">Deadline</th>
+                <th scope="col">Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for review in reviews %}
+            <tr>
+                <th scope="row">{{ review.articleName }}</th>
+                <td>{{ review.deadline|date('d. m. Y') }}</td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

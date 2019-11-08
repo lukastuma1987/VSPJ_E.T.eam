@@ -4,10 +4,13 @@
 namespace EditorialBundle\Controller;
 
 use EditorialBundle\Entity\Article;
+use EditorialBundle\Entity\Review;
 use EditorialBundle\Entity\User;
 use EditorialBundle\Enum\ArticleStatus;
 use EditorialBundle\Factory\EmailFactory;
 use EditorialBundle\Factory\ResponseFactory;
+use EditorialBundle\Form\AssignReviewersType;
+use EditorialBundle\Model\AssignReviewersModel;
 use EditorialBundle\Repository\ArticleRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -105,5 +108,48 @@ class EditorController extends Controller
         $emailFactory->sendStatusChangedNotification($article);
 
         return $this->redirectToRoute('editor_articles_assigned_to_editor_list');
+    }
+
+    /**
+     * @Route("/clanek-{id}/priradit-recenzenty", name="editor_article_assign_reviewers", methods={"GET", "POST"})
+     */
+    public function assignReviewersToArticleAction(Request $request, Article $article, EmailFactory $emailFactory)
+    {
+        if ($article->getEditor() !== $this->getUser()) {
+            $this->createAccessDeniedException('Tento článek není přiřazený vám');
+        }
+
+        $form = $this->createForm(AssignReviewersType::class, new AssignReviewersModel($article));
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var AssignReviewersModel $model */
+            $model = $form->getData();
+            $deadline = $model->getDeadline();
+            $article->setStatus(ArticleStatus::STATUS_REVIEWERS_ASSIGNED);
+
+            foreach ($model->getReviewers() as $reviewer) {
+                $review = new Review();
+                $review->setDeadline($deadline);
+                $review->setReviewer($reviewer);
+
+                $article->addReview($review);
+                $emailFactory->sendReviewRequestNotification($review);
+            }
+
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+
+            $this->addFlash('success', 'Článek byl předán k hodnocení.');
+
+            $emailFactory->sendStatusChangedNotification($article);
+
+            return $this->redirectToRoute('editor_articles_assigned_to_editor_list');
+        }
+
+        return $this->render('@Editorial/Editor/Article/assignReviewers.html.twig', [
+            'article' => $article,
+            'form' => $form->createView(),
+        ]);
     }
 }

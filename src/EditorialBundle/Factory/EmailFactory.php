@@ -3,6 +3,7 @@
 namespace EditorialBundle\Factory;
 
 use EditorialBundle\Entity\Article;
+use EditorialBundle\Entity\Review;
 use EditorialBundle\Entity\User;
 use EditorialBundle\Repository\UserRepository;
 use Psr\Log\LoggerInterface;
@@ -77,7 +78,7 @@ class EmailFactory
     }
 
     /**
-     * Odesílá clastníkovi článku email o změně statusu
+     * Odesílá vlastníkovi článku email o změně statusu
      *
      * @param Article $article
      */
@@ -87,13 +88,38 @@ class EmailFactory
             $htmlBody = $this->twig->render('@Editorial/Email/statusUpdated.html.twig', ['article' => $article]);
             $textBody = $this->twig->render('@Editorial/Email/statusUpdated.txt.twig', ['article' => $article]);
         } catch (Error $e) {
-            $this->logWarning('Rendering email failed', ['service' => EmailFactory::class]);
+            $this->logWarning($e->getMessage(), ['service' => EmailFactory::class]);
             return;
         }
 
         $message = (new \Swift_Message('Změna statusu vašeho článku'))
             ->setFrom($this->sender)
             ->setTo($article->getOwnerEmail())
+            ->setBody($htmlBody, 'text/html')
+            ->addPart($textBody, 'text/plain')
+        ;
+
+        $this->mailer->send($message);
+    }
+
+    /**
+     * Odesílá recenzentům email o požadavku na recenzi
+     *
+     * @param Review $review
+     */
+    public function sendReviewRequestNotification(Review $review)
+    {
+        try {
+            $htmlBody = $this->twig->render('@Editorial/Email/reviewRequested.html.twig', ['review' => $review]);
+            $textBody = $this->twig->render('@Editorial/Email/reviewRequested.txt.twig', ['review' => $review]);
+        } catch (Error $e) {
+            $this->logWarning($e->getMessage(), ['service' => EmailFactory::class]);
+            return;
+        }
+
+        $message = (new \Swift_Message('Požadavek na hodnocení článku'))
+            ->setFrom($this->sender)
+            ->setTo($review->getReviewerEmail())
             ->setBody($htmlBody, 'text/html')
             ->addPart($textBody, 'text/plain')
         ;
