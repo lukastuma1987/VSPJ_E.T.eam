@@ -6,6 +6,7 @@ namespace EditorialBundle\Controller;
 use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\User;
 use EditorialBundle\Enum\ArticleStatus;
+use EditorialBundle\Factory\EmailFactory;
 use EditorialBundle\Factory\ResponseFactory;
 use EditorialBundle\Repository\ArticleRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -54,19 +55,19 @@ class EditorController extends Controller
     /**
      * @Route("/clanek-{id}/stahnout", name="editor_article_download", methods={"GET"})
      */
-    public function downloadArticleAction(Article $article)
+    public function downloadArticleAction(Article $article, ResponseFactory $responseFactory)
     {
         if (!$article->getLastVersion()) {
             throw $this->createNotFoundException('Článek neobsahuje verzi');
         }
 
-        return ResponseFactory::createArticleFileResponse($article);
+        return $responseFactory->createArticleFileResponse($article);
     }
 
     /**
      * @Route("/clanek-{id}/priradit", name="editor_article_assign", methods={"POST"})
      */
-    public function assignToEditor(Request $request, Article $article)
+    public function assignToEditor(Request $request, Article $article, EmailFactory $emailFactory)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -100,7 +101,8 @@ class EditorController extends Controller
         $em->flush();
 
         $this->addFlash('success', 'Článek Vám byl úspěšně přiřazen. Recenzní řízení začalo.');
-        // ToDo odeslat email autorovi
+
+        $emailFactory->sendStatusChangedNotification($article);
 
         return $this->redirectToRoute('editor_articles_assigned_to_editor_list');
     }

@@ -19,7 +19,7 @@ class MagazineRepository extends EntityRepository
     public function findWithFile()
     {
         return $this->createQueryBuilder('m')
-            ->where('m.file IS NOT NULL')
+            ->where('m.suffix IS NOT NULL')
             ->getQuery()
             ->getResult()
         ;

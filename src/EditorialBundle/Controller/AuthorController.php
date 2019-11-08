@@ -7,9 +7,12 @@ use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\ArticleAuthor;
 use EditorialBundle\Entity\ArticleVersion;
 use EditorialBundle\Entity\User;
+use EditorialBundle\Factory\EmailFactory;
 use EditorialBundle\Form\ArticleType;
+use EditorialBundle\Util\FileNameUtil;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,7 +26,7 @@ class AuthorController extends Controller
     /**
      * @Route("/novy-clanek", name="author_article_create", methods={"GET", "POST"})
      */
-    public function createArticleAction(Request $request)
+    public function createArticleAction(Request $request, EmailFactory $emailFactory)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -42,7 +45,6 @@ class AuthorController extends Controller
 
             if ($file && $file->isValid()) {
                 $version = new ArticleVersion();
-                $version->setFile(file_get_contents($file->getPathname()));
                 $version->setSuffix($file->getClientOriginalExtension());
 
                 $article->addVersion($version);
@@ -51,7 +53,15 @@ class AuthorController extends Controller
                 $em->persist($article);
                 $em->flush();
 
-                // ToDo odeslat email redaktorum
+                try {
+                    $fileName = FileNameUtil::getArticleVersionFileName($version);
+                    $file->move($this->getParameter('article_directory'), $fileName);
+                } catch (FileException $exception) {
+                    $this->addFlash('danger', $exception->getMessage());
+                    return $this->redirectToRoute('editorial_dashboard');
+                }
+
+                $emailFactory->sendNewArticleNotification($article);
 
                 $this->addFlash('success', 'Článek byl úspěšně vytvořen.');
 

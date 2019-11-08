@@ -4,32 +4,43 @@ namespace EditorialBundle\Factory;
 
 use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\Magazine;
+use EditorialBundle\Util\FileNameUtil;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class ResponseFactory
+class ResponseFactory
 {
-    public static function createMagazineFileResponse(Magazine $magazine)
-    {
-        $file = $magazine->getFile();
-        $fileName = sprintf('rocnik%d-cislo%d.%s', $magazine->getYear(), $magazine->getNumber(), $magazine->getSuffix());
+    /** @var string */
+    private $articleDirectory;
 
-        return new Response(stream_get_contents($file), 200, [
+    /** @var string */
+    private $magazineDirectory;
+
+    public function __construct($articleDirectory, $magazineDirectory)
+    {
+        $this->articleDirectory = $articleDirectory;
+        $this->magazineDirectory = $magazineDirectory;
+    }
+
+    public function createMagazineFileResponse(Magazine $magazine)
+    {
+        $fileName = FileNameUtil::getMagazineDisplayFileName($magazine);
+        $filePath = $this->magazineDirectory . '/' . FileNameUtil::getMagazineFileName($magazine);
+
+        return new BinaryFileResponse($filePath, 200, [
             'Content-Type' => 'application/octet-stream',
             'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
         ]);
     }
 
-    public static function createArticleFileResponse(Article $article)
+    public function createArticleFileResponse(Article $article)
     {
         $version = $article->getLastVersion();
-        $file = $version->getFile();
 
-        $created = $version->getCreated();
-        $created = $created ? $created->format('Ymd') : '00000000';
+        $fileName = FileNameUtil::getArticleVersionDisplayFileName($version);
+        $filePath = $this->articleDirectory . '/' . FileNameUtil::getArticleVersionFileName($version);
 
-        $fileName = sprintf('%s-%s.%s', $article->getName(), $created, $version->getSuffix());
-
-        return new Response(stream_get_contents($file), 200, [
+        return new BinaryFileResponse($filePath, 200, [
             'Content-Type' => 'application/octet-stream',
             'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
         ]);

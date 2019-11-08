@@ -5,7 +5,6 @@ namespace EditorialBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use EditorialBundle\Enum\ArticleStatus;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -361,10 +360,49 @@ class Article
         return $this->versions->isEmpty() ? null : $this->versions->last();
     }
 
+    /**
+     * @return string
+     */
     public function getOwnerInfo()
     {
-        if ($owner = $this->owner) {
+        if ($owner = $this->getOwner()) {
             return sprintf('%s (%s)', $owner->getUsername(), $owner->getEmail());
+        }
+
+        return '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getOwnerEmail()
+    {
+        if ($owner = $this->getOwner()) {
+            return $owner->getEmail();
+        }
+
+        return '';
+    }
+
+    /**
+     * @return int|string
+     */
+    public function getMagazineYear()
+    {
+        if ($magazine = $this->getMagazine()) {
+            return $magazine->getYear();
+        }
+
+        return '';
+    }
+
+    /**
+     * @return int|string
+     */
+    public function getMagazineNumber()
+    {
+        if ($magazine = $this->getMagazine()) {
+            return $magazine->getNumber();
         }
 
         return '';
