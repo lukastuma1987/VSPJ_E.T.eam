@@ -8,6 +8,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th scope="col">#</th>
                 <th scope="col">Název článku</th>
                 <th scope="col">Deadline</th>
                 <th scope="col">Akce</th>
@@ -16,7 +17,8 @@
         <tbody>
         {% for review in reviews %}
             <tr>
-                <th scope="row">{{ review.articleName }}</th>
+                <th scope="row">{{ review.id }}</th>
+                <th>{{ review.articleName }}</th>
                 <td>{{ review.deadline|date('d. m. Y') }}</td>
                 <td></td>
             </tr>
