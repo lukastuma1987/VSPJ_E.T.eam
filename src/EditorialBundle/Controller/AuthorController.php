@@ -31,7 +31,7 @@ class AuthorController extends Controller
         /** @var User $user */
         $user = $this->getUser();
         $article = new Article();
-        $article->addAuthor(new ArticleAuthor());
+        $article->addAuthor(new ArticleAuthor($user));
         $article->setOwner($user);
 
         $form = $this->createForm(ArticleType::class, $article);

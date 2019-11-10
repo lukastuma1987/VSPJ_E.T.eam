@@ -3,6 +3,7 @@
 
 namespace EditorialBundle\Controller;
 
+use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\Magazine;
 use EditorialBundle\Factory\ResponseFactory;
 use EditorialBundle\Form\MagazineType;
@@ -143,12 +144,26 @@ class ChiefEditorController extends Controller
     /**
      * @Route("/cislo-casopisu-{id}/stahnout", name="chief_editor_magazine_download", methods={"GET"})
      */
-    public function downloadArticleAction(Magazine $magazine, ResponseFactory $responseFactory)
+    public function downloadMagazineAction(Magazine $magazine, ResponseFactory $responseFactory)
     {
         if (!$magazine->getSuffix()) {
             throw $this->createNotFoundException('Číslo časopisu není nahráno');
         }
 
         return $responseFactory->createMagazineFileResponse($magazine);
+    }
+
+    /**
+     * @Route("/clanky/vse", name="chief_editor_articles_list", methods={"GET"})
+     */
+    public function listArticles()
+    {
+        $repository = $this->getDoctrine()->getRepository(Article::class);
+        /** @var Article[] $articles */
+        $articles = $repository->findAll();
+
+        return $this->render('@Editorial/ChiefEditor/Article/list.html.twig', [
+            'articles' => $articles,
+        ]);
     }
 }

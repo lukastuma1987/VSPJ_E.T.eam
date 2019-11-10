@@ -1,6 +1,6 @@
 {% extends '@Editorial/base.html.twig' %}
 
-{% block title %}Články čekající na vaše hodnocení{% endblock %}
+{% block title %}Články čekající na Vaše hodnocení{% endblock %}
 
 {% block content %}
     <h1>{{ block('title') }}</h1>
@@ -8,6 +8,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th scope="col">#</th>
                 <th scope="col">Název článku</th>
                 <th scope="col">Deadline</th>
                 <th scope="col">Akce</th>
@@ -16,9 +17,12 @@
         <tbody>
         {% for review in reviews %}
             <tr>
-                <th scope="row">{{ review.articleName }}</th>
+                <th scope="row">{{ review.id }}</th>
+                <th>{{ review.articleName }}</th>
                 <td>{{ review.deadline|date('d. m. Y') }}</td>
-                <td></td>
+                <td>
+                    <a class="btn btn-primary" href="{{ path('reviewer_article_download', {id: review.articleId }) }}">Stáhnout</a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>

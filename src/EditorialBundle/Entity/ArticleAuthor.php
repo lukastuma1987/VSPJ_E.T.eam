@@ -67,6 +67,11 @@ class ArticleAuthor
      */
     private $article;
 
+    public function __construct(User $user = null)
+    {
+        $this->email = $user ? $user->getEmail() : null;
+    }
+
     /**
      * Get id.
      *

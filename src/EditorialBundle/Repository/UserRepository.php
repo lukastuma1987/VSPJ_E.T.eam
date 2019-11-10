@@ -4,6 +4,7 @@ namespace EditorialBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use EditorialBundle\Entity\Article;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 
 class UserRepository extends EntityRepository implements UserLoaderInterface
@@ -63,6 +64,17 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
             ->where('r.role = :roleEditor OR r.role = :roleChiefEditor')
             ->setParameter('roleEditor', 'ROLE_EDITOR')
             ->setParameter('roleChiefEditor', 'ROLE_CHIEF_EDITOR')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findReviewersByArticle(Article $article)
+    {
+        return $this->createQueryBuilder('u')
+            ->join('u.reviews', 'r')
+            ->where('r.article = :article')
+            ->setParameter('article', $article)
             ->getQuery()
             ->getResult()
         ;

@@ -55,6 +55,7 @@ i, span {
     background-color: #37474F;
     color: #fff;
     transition: all 0.3s;
+    overflow: hidden;
 }
 
 #sidebar.active {
