@@ -142,18 +142,6 @@ class ChiefEditorController extends Controller
     }
 
     /**
-     * @Route("/cislo-casopisu-{id}/stahnout", name="chief_editor_magazine_download", methods={"GET"})
-     */
-    public function downloadMagazineAction(Magazine $magazine, ResponseFactory $responseFactory)
-    {
-        if (!$magazine->getSuffix()) {
-            throw $this->createNotFoundException('Číslo časopisu není nahráno');
-        }
-
-        return $responseFactory->createMagazineFileResponse($magazine);
-    }
-
-    /**
      * @Route("/clanky/vse", name="chief_editor_articles_list", methods={"GET"})
      */
     public function listArticles()

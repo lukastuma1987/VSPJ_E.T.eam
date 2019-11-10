@@ -27,7 +27,7 @@
                 <td>{{ article.magazineChoiceName }}</td>
                 <td class="status-{{ article|statusClass }}">{{ article|statusName }}</td>
                 <td>
-                    <a href="{{ path('editor_article_download', {id: article.id}) }}" class="btn btn-sm btn-primary mb-1">Stáhnout</a>
+                    <a href="{{ path('download_article', {id: article.id}) }}" class="btn btn-sm btn-primary mb-1">Stáhnout</a>
                 </td>
             </tr>
         {% endfor %}
