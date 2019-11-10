@@ -92,7 +92,7 @@ class EmailFactory
             return;
         }
 
-        $message = (new \Swift_Message('Změna statusu vašeho článku'))
+        $message = (new \Swift_Message('Změna statusu Vašeho článku'))
             ->setFrom($this->sender)
             ->setTo($article->getOwnerEmail())
             ->setBody($htmlBody, 'text/html')
