@@ -75,4 +75,17 @@ class AuthorController extends Controller
             'form' => $form->createView(),
         ]);
     }
+
+    /**
+     * @Route("/vase-clanky", name="author_articles_list", methods={"GET"})
+     */
+    public function authorArticlesList()
+    {
+        /** @var User $author */
+        $author = $this->getUser();
+
+        return $this->render('@Editorial/Author/Article/list.html.twig', [
+            'articles' => $author->getAuthorArticles(),
+        ]);
+    }
 }

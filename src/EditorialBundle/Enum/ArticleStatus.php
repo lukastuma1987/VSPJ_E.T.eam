@@ -8,12 +8,14 @@ abstract class ArticleStatus
     const STATUS_NEW = 1;
     const STATUS_ASSIGNED = 2;
     const STATUS_REVIEWERS_ASSIGNED = 10;
+    const STATUS_REVIEWS_FILLED = 20;
 
     private static $statusNames = [
         self::STATUS_DECLINED => 'Zamítnuto',
         self::STATUS_NEW => 'Nový',
         self::STATUS_ASSIGNED => 'Přijato do recenzního řízení',
         self::STATUS_REVIEWERS_ASSIGNED => 'Předáno recenzentům',
+        self::STATUS_REVIEWS_FILLED => 'Hodnocení vyplněna',
     ];
 
     private static $statusClass = [
@@ -21,6 +23,7 @@ abstract class ArticleStatus
         self::STATUS_NEW => 'new',
         self::STATUS_ASSIGNED => 'assigned',
         self::STATUS_REVIEWERS_ASSIGNED => 'reviewers-assigned',
+        self::STATUS_REVIEWS_FILLED => 'reviews-filled',
     ];
 
     public static function getStatusName($status)

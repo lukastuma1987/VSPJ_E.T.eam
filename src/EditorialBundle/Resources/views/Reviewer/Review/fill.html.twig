@@ -1,0 +1,20 @@
+{% extends '@Editorial/base.html.twig' %}
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block title %}Přidat hodnocení{% endblock %}
+
+{% block content %}
+    <h1>Přidat hodnocení článku &quot;{{ review.articleName }}&quot;</h1>
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col-sm-6">{{ form_row(form.benefitLevel) }}</div>
+            <div class="col-sm-6">{{ form_row(form.originalityLevel) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">{{ form_row(form.professionalLevel) }}</div>
+            <div class="col-sm-6">{{ form_row(form.languageLevel) }}</div>
+        </div>
+        {{ form_rest(form) }}
+        <button class="btn btn-primary">Odeslat</button>
+    {{ form_end(form) }}
+{% endblock %}

@@ -3,6 +3,7 @@
 namespace EditorialBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Review
@@ -48,6 +49,63 @@ class Review
      * @ORM\Column(name="deadline", type="datetime")
      */
     private $deadline;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="benefit_level", type="integer", nullable=true)
+     * @Assert\NotBlank(message="Zadejte prosím úroveň aktuálnosti, zajímavosti a přínosnosti")
+     * @Assert\Range(
+     *     min="1",
+     *     max="5",
+     *     minMessage="Minimální povolená hodnota je {{ limit }}",
+     *     maxMessage="Maximální povolená hodnota je {{ limit }}"
+     * )
+     */
+    private $benefitLevel;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="originality_level", type="integer", nullable=true)
+     * @Assert\NotBlank(message="Zadejte prosím úroveň originality")
+     * @Assert\Range(
+     *     min="1",
+     *     max="5",
+     *     minMessage="Minimální povolená hodnota je {{ limit }}",
+     *     maxMessage="Maximální povolená hodnota je {{ limit }}"
+     * )
+     */
+    private $originalityLevel;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="professional_level", type="integer", nullable=true)
+     * @Assert\NotBlank(message="Zadejte prosím úroveň odbornosti")
+     * @Assert\Range(
+     *     min="1",
+     *     max="5",
+     *     minMessage="Minimální povolená hodnota je {{ limit }}",
+     *     maxMessage="Maximální povolená hodnota je {{ limit }}"
+     * )
+     */
+    private $professionalLevel;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="language_level", type="integer", nullable=true)
+     * @Assert\NotBlank(message="Zadejte prosím jazykovou a stylistickou úroveň")
+     * @Assert\Range(
+     *     min="1",
+     *     max="5",
+     *     minMessage="Minimální povolená hodnota je {{ limit }}",
+     *     maxMessage="Maximální povolená hodnota je {{ limit }}"
+     * )
+     */
+    private $languageLevel;
+
 
     /**
      * @var Article
@@ -165,6 +223,82 @@ class Review
     }
 
     /**
+     * @param int $benefitLevel
+     * @return Review
+     */
+    public function setBenefitLevel($benefitLevel)
+    {
+        $this->benefitLevel = $benefitLevel;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getBenefitLevel()
+    {
+        return $this->benefitLevel;
+    }
+
+    /**
+     * @param int $originalityLevel
+     * @return Review
+     */
+    public function setOriginalityLevel($originalityLevel)
+    {
+        $this->originalityLevel = $originalityLevel;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOriginalityLevel()
+    {
+        return $this->originalityLevel;
+    }
+
+    /**
+     * @param int $professionalLevel
+     * @return Review
+     */
+    public function setProfessionalLevel($professionalLevel)
+    {
+        $this->professionalLevel = $professionalLevel;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getProfessionalLevel()
+    {
+        return $this->professionalLevel;
+    }
+
+    /**
+     * @param int $languageLevel
+     * @return Review
+     */
+    public function setLanguageLevel($languageLevel)
+    {
+        $this->languageLevel = $languageLevel;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLanguageLevel()
+    {
+        return $this->languageLevel;
+    }
+
+    /**
      * Set Article
      *
      * @param Article $article
@@ -244,5 +378,13 @@ class Review
         }
 
         return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFilled()
+    {
+        return $this->review ? true : false;
     }
 }
