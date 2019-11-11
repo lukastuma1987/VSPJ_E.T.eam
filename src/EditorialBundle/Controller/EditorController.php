@@ -56,18 +56,6 @@ class EditorController extends Controller
     }
 
     /**
-     * @Route("/clanek-{id}/stahnout", name="editor_article_download", methods={"GET"})
-     */
-    public function downloadArticleAction(Article $article, ResponseFactory $responseFactory)
-    {
-        if (!$article->getLastVersion()) {
-            throw $this->createNotFoundException('Článek neobsahuje verzi');
-        }
-
-        return $responseFactory->createArticleFileResponse($article);
-    }
-
-    /**
      * @Route("/clanek-{id}/priradit", name="editor_article_assign", methods={"POST"})
      */
     public function assignToEditor(Request $request, Article $article, EmailFactory $emailFactory)
@@ -112,13 +100,10 @@ class EditorController extends Controller
 
     /**
      * @Route("/clanek-{id}/priradit-recenzenty", name="editor_article_assign_reviewers", methods={"GET", "POST"})
+     * @Security("is_granted('ASSIGN_REVIEWER', article)", message="Nejste redaktrem obsluhujícím redakční řízení článku")
      */
     public function assignReviewersToArticleAction(Request $request, Article $article, EmailFactory $emailFactory)
     {
-        if ($article->getEditor() !== $this->getUser()) {
-            $this->createAccessDeniedException('Tento článek není přiřazený vám');
-        }
-
         $form = $this->createForm(AssignReviewersType::class, new AssignReviewersModel($article));
         $form->handleRequest($request);
 

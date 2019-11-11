@@ -30,7 +30,7 @@
                 <td>{{ magazine.deadlineDate|date('d. m. Y') }}</td>
                 <td>
                     {% if magazine.suffix %}
-                        <a href="{{ path('chief_editor_magazine_download', {id: magazine.id}) }}" class="btn btn-sm btn-info mb-1">Stáhnout</a>
+                        <a href="{{ path('download_magazine', {id: magazine.id}) }}" class="btn btn-sm btn-info mb-1">Stáhnout</a>
                     {% endif %}
                     <a href="{{ path('chief_editor_magazine_upload', {id: magazine.id}) }}" class="btn btn-sm btn-dark mb-1">Nahrát</a>
                     <a href="{{ path('chief_editor_magazine_edit', {id: magazine.id}) }}" class="btn btn-sm btn-success mb-1">Upravit</a>
