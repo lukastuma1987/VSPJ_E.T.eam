@@ -10,6 +10,7 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Název článku</th>
+                <th scope="col">Autor</th>
                 <th scope="col">Deadline</th>
                 <th scope="col">Akce</th>
             </tr>
@@ -19,6 +20,7 @@
             <tr>
                 <th scope="row">{{ review.id }}</th>
                 <th>{{ review.articleName }}</th>
+                <th>{{ review.articleOwnerInfo }}</th>
                 <td>{{ review.deadline|date('d. m. Y') }}</td>
                 <td>
                     <a class="btn btn-primary" href="{{ path('download_article', {id: review.articleId }) }}">Stáhnout</a>

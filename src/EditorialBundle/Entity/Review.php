@@ -387,4 +387,16 @@ class Review
     {
         return $this->review ? true : false;
     }
+
+    /**
+     * @return string
+     */
+    public function getArticleOwnerInfo()
+    {
+        if ($article = $this->getArticle()) {
+            return $article->getOwnerInfo();
+        }
+
+        return '';
+    }
 }
