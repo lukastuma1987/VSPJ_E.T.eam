@@ -62,4 +62,19 @@ class ArticleRepository extends EntityRepository
             return 0;
         }
     }
+
+
+
+    public function findReviewedByReviewer(User $reviewer)
+    {
+        return $this->createQueryBuilder('a')
+            ->join('a.reviews', 'r')
+            ->where('r.reviewer = :reviewer')
+            ->andWhere('r.review IS NOT NULL AND r.review != :empty')
+            ->setParameter('reviewer', $reviewer)
+            ->setParameter('empty', '')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

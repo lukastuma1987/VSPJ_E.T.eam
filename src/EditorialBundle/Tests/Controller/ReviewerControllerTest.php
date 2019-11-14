@@ -13,7 +13,7 @@ use EditorialBundle\Repository\UserRepository;
 use EditorialBundle\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
 
-class ReviewControllerTest extends WebTestCase
+class ReviewerControllerTest extends WebTestCase
 {
     /** @var Client $client  */
     private $client;

@@ -5,7 +5,7 @@ body {
     background-color: #fafafa;
 }
 
-p {
+#sidebar p {
     font-family: 'Roboto', sans-serif;
     font-size: 1.1em;
     line-height: 1.7em;
@@ -233,4 +233,12 @@ i, span {
     #sidebarCollapse span {
         display: none;
     }
+}
+
+.review-table tbody tr:nth-of-type(odd) {
+    background-color: transparent;
+}
+
+.review-table tbody tr:nth-of-type(4n + 1), .review-table tbody tr:nth-of-type(4n + 2) {
+    background-color: rgba(0,0,0,.05);
 }

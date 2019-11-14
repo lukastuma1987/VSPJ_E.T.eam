@@ -2,13 +2,13 @@
 
 namespace EditorialBundle\Security;
 
-use EditorialBundle\Entity\Article;
+use EditorialBundle\Entity\ArticleVersion;
 use EditorialBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 
-class ArticleVoter extends Voter
+class ArticleVersionVoter extends Voter
 {
     private $security;
 
@@ -17,18 +17,15 @@ class ArticleVoter extends Voter
         $this->security = $security;
     }
 
-    const ASSIGN_REVIEWER = 'ASSIGN_REVIEWER';
     const DOWNLOAD = 'DOWNLOAD';
-    const DETAIL = 'DETAIL';
-    const COMMENT = 'COMMENT';
 
     protected function supports($attribute, $subject)
     {
-        if (!in_array($attribute, [self::ASSIGN_REVIEWER, self::DOWNLOAD, self::COMMENT, self::DETAIL])) {
+        if (!in_array($attribute, [self::DOWNLOAD])) {
             return false;
         }
 
-        if (!$subject instanceof Article) {
+        if (!$subject instanceof ArticleVersion) {
             return false;
         }
 
@@ -44,31 +41,24 @@ class ArticleVoter extends Voter
         }
 
         switch ($attribute) {
-            case self::ASSIGN_REVIEWER:
-                return $this->canAssignReviewer($subject, $user);
             case self::DOWNLOAD:
-            case self::DETAIL:
-            case self::COMMENT:
-                return $this->isEditorOrRelatedToArticle($subject, $user);
+                return $this->canDownload($subject, $user);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
     // private
-    private function canAssignReviewer(Article $article, User $user)
-    {
-        if ($this->security->isGranted('ROLE_CHIEF_EDITOR')) {
-            return true;
-        }
 
-        return $user === $article->getEditor();
-    }
-
-    private function isEditorOrRelatedToArticle(Article $article, User $user)
+    private function canDownload(ArticleVersion $version, User $user)
     {
         if ($this->security->isGranted('ROLE_EDITOR')) {
             return true;
+        }
+
+        $article = $version->getArticle();
+        if (!$article) {
+            return false;
         }
 
         if ($user === $article->getOwner()) {

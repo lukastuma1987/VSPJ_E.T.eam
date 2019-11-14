@@ -59,6 +59,7 @@ class Article
      *
      * @ORM\OneToMany(targetEntity="ArticleAuthor", mappedBy="article", cascade={"persist", "remove"}, orphanRemoval=true)
      * @Assert\Valid()
+     * @Assert\Count(min="1", minMessage="Článek musí mít alespoň jednoho autora")
      */
     private $authors;
 
@@ -93,11 +94,19 @@ class Article
      */
     private $reviews;
 
+    /**
+     * @var ArrayCollection|ArticleComment[]
+     *
+     * @ORM\OneToMany(targetEntity="ArticleComment", mappedBy="article", cascade={"persist"})
+     */
+    private $comments;
+
     public function __construct()
     {
         $this->versions = new ArrayCollection();
         $this->authors = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->comments = new ArrayCollection();
         $this->created = new \DateTime();
         $this->status = ArticleStatus::STATUS_NEW;
     }
@@ -343,6 +352,45 @@ class Article
     }
 
     /**
+     * @param ArticleComment $comment
+     * @return Article
+     */
+    public function addComment(ArticleComment $comment)
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ArticleComment $comment
+     * @return Article
+     */
+    public function removeComment(ArticleComment $comment)
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+
+            if ($comment->getArticle() === $this) {
+                $comment->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|ArticleComment[]
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
      * @return string
      */
     public function getMagazineChoiceName()
@@ -368,7 +416,7 @@ class Article
     public function getOwnerInfo()
     {
         if ($owner = $this->getOwner()) {
-            return sprintf('%s (%s)', $owner->getUsername(), $owner->getEmail());
+            return $owner->getDisplayName();
         }
 
         return '';
@@ -380,7 +428,7 @@ class Article
     public function getEditorInfo()
     {
         if ($editor = $this->getEditor()) {
-            return sprintf('%s (%s)', $editor->getUsername(), $editor->getEmail());
+            return $editor->getDisplayName();
         }
 
         return '';

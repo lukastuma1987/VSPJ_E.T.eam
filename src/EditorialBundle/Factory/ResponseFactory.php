@@ -3,6 +3,7 @@
 namespace EditorialBundle\Factory;
 
 use EditorialBundle\Entity\Article;
+use EditorialBundle\Entity\ArticleVersion;
 use EditorialBundle\Entity\Magazine;
 use EditorialBundle\Util\FileNameUtil;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -33,10 +34,8 @@ class ResponseFactory
         ]);
     }
 
-    public function createArticleFileResponse(Article $article)
+    public function createArticleVersionFileResponse(ArticleVersion $version)
     {
-        $version = $article->getLastVersion();
-
         $fileName = FileNameUtil::getArticleVersionDisplayFileName($version);
         $filePath = $this->articleDirectory . '/' . FileNameUtil::getArticleVersionFileName($version);
 
