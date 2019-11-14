@@ -184,6 +184,11 @@ i, span {
     color: #cc07ff;
 }
 
+.status-reviews-filled {
+    font-weight: bold;
+    color: #fa8200;
+}
+
 @media (max-width: 768px) {
     #sidebar {
         min-width: 80px;

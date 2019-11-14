@@ -127,6 +127,58 @@ class EmailFactory
         $this->mailer->send($message);
     }
 
+    /**
+     * Odesílá vlastníkovi článku informaci o vložení nového hodnocení
+     *
+     * @param Review $review
+     */
+    public function sendNewReviewNotification(Review $review)
+    {
+        try {
+            $htmlBody = $this->twig->render('@Editorial/Email/newReview.html.twig', ['review' => $review]);
+            $textBody = $this->twig->render('@Editorial/Email/newReview.txt.twig', ['review' => $review]);
+        } catch (Error $e) {
+            $this->logWarning($e->getMessage(), ['service' => EmailFactory::class]);
+            return;
+        }
+
+        $article = $review->getArticle();
+
+        $message = (new \Swift_Message('Bylo vloženo nové hodnocení Vašeho článku'))
+            ->setFrom($this->sender)
+            ->setTo($article ? $article->getOwnerEmail() : '')
+            ->setBody($htmlBody, 'text/html')
+            ->addPart($textBody, 'text/plain')
+        ;
+
+        $this->mailer->send($message);
+    }
+
+    /**
+     * Odesílá editorovi inforamci o tom, že všechna hdnocení byla vyplněna
+     *
+     * @param Article $article
+     */
+    public function sendAllReviewsFilledNotification(Article $article)
+    {
+        try {
+            $htmlBody = $this->twig->render('@Editorial/Email/allReviewsFilled.html.twig', ['article' => $article]);
+            $textBody = $this->twig->render('@Editorial/Email/allReviewsFilled.txt.twig', ['article' => $article]);
+        } catch (Error $e) {
+            $this->logWarning($e->getMessage(), ['service' => EmailFactory::class]);
+            return;
+        }
+
+        $message = (new \Swift_Message('Všechna hodnocení byla vyplněna'))
+            ->setFrom($this->sender)
+            ->setTo($article->getEditorEmail())
+            ->setBody($htmlBody, 'text/html')
+            ->addPart($textBody, 'text/plain')
+        ;
+
+        $this->mailer->send($message);
+    }
+
     // private
 
     private function logWarning($message, $context = [])

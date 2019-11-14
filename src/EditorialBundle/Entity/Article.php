@@ -389,6 +389,18 @@ class Article
     /**
      * @return string
      */
+    public function getEditorEmail()
+    {
+        if ($editor = $this->getEditor()) {
+            return $editor->getEmail();
+        }
+
+        return '';
+    }
+
+    /**
+     * @return string
+     */
     public function getOwnerEmail()
     {
         if ($owner = $this->getOwner()) {
@@ -420,5 +432,19 @@ class Article
         }
 
         return '';
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasAllReviewsFilled()
+    {
+        foreach ($this->getReviews() as $review) {
+            if (!$review->isFilled()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
