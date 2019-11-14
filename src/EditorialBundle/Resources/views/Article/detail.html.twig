@@ -66,9 +66,10 @@
         </thead>
         <tbody>
         {% for review in article.reviews %}
+            {% if review.review %}
             <tr>
                 <th scope="row">{{ review.reviewerInfo }}</th>
-                <td>{{ review.created|date('d. m. Y') }}</td>
+                <td>{{ review.filled|date('d. m. Y') }}</td>
                 <td>{{ review.benefitLevel }}</td>
                 <td>{{ review.originalityLevel }}</td>
                 <td>{{ review.professionalLevel }}</td>
@@ -77,6 +78,7 @@
             <tr>
                 <td colspan="6">{{ review.review }}</td>
             </tr>
+            {% endif %}
         {% endfor %}
         </tbody>
     </table>
