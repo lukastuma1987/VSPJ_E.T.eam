@@ -1,0 +1,8 @@
+Byla vložena nová verze článku
+
+Název: {{ article.name }}
+Číslo časopisu: ročník - {{ article.magazineYear }}, číslo - {{ article.magazineNumber }}
+Autoři:
+{% for author in article.authors %}
+    {{ author.fullName }}
+{% endfor %}

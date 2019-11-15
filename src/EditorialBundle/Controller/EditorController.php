@@ -9,6 +9,7 @@ use EditorialBundle\Entity\User;
 use EditorialBundle\Enum\ArticleStatus;
 use EditorialBundle\Factory\EmailFactory;
 use EditorialBundle\Factory\ResponseFactory;
+use EditorialBundle\Form\ArticleStatusType;
 use EditorialBundle\Form\AssignReviewersType;
 use EditorialBundle\Model\AssignReviewersModel;
 use EditorialBundle\Repository\ArticleRepository;
@@ -39,7 +40,7 @@ class EditorController extends Controller
     }
 
     /**
-     * @Route("/vypis-clanku-prirazenych-mne", name="editor_articles_assigned_to_editor_list", methods={"GET"})
+     * @Route("/vypis-clanku-prirazenych-vam", name="editor_articles_assigned_to_editor_list", methods={"GET"})
      */
     public function assignedToEditorArticleListAction()
     {
@@ -99,12 +100,21 @@ class EditorController extends Controller
     }
 
     /**
-     * @Route("/clanek-{id}/priradit-recenzenty", name="editor_article_assign_reviewers", methods={"GET", "POST"})
-     * @Security("is_granted('ASSIGN_REVIEWER', article)", message="Nejste redaktrem obsluhujícím redakční řízení článku")
+     * @Route("/clanek-{id}/pridat-recenzenty", name="editor_article_add_reviewers", methods={"GET", "POST"})
+     * @Security("is_granted('ADD_REVIEWER', article)", message="Nejste redaktorem obsluhujícím redakční řízení článku")
      */
     public function assignReviewersToArticleAction(Request $request, Article $article, EmailFactory $emailFactory)
     {
-        $form = $this->createForm(AssignReviewersType::class, new AssignReviewersModel($article));
+        $validationGroups = ['Default'];
+        if ($article->getStatus() === ArticleStatus::STATUS_ASSIGNED) {
+            $validationGroups[] = 'New';
+        } else {
+            $validationGroups[] = 'Existing';
+        }
+
+        $form = $this->createForm(AssignReviewersType::class, new AssignReviewersModel($article), [
+            'validation_groups' => $validationGroups,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -135,6 +145,38 @@ class EditorController extends Controller
         return $this->render('@Editorial/Editor/Article/assignReviewers.html.twig', [
             'article' => $article,
             'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/clanek-{id}/upravit-status", name="editor_article_change_status", methods={"GET", "POST"})
+     * @Security("is_granted('CHANGE_STATUS', article)", message="Nejste redaktorem obsluhujícím redakční řízení článku")
+     */
+    public function changeStatusAction(Request $request, Article $article, EmailFactory $emailFactory)
+    {
+        $status = $article->getStatus();
+        $form = $this->createForm(ArticleStatusType::class, $article);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Article $article */
+            $article = $form->getData();
+
+            if ($article->getStatus() !== $status) {
+                $emailFactory->sendStatusChangedNotification($article);
+            }
+
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+
+            $this->addFlash('success', 'Status článku upraven');
+
+            return $this->redirectToRoute('editor_articles_assigned_to_editor_list');
+        }
+
+        return $this->render('@Editorial/Editor/Article/changeStatus.html.twig', [
+            'form' => $form->createView(),
+            'article' => $article,
         ]);
     }
 }

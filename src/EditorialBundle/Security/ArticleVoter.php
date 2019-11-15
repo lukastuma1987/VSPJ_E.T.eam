@@ -4,6 +4,7 @@ namespace EditorialBundle\Security;
 
 use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\User;
+use EditorialBundle\Enum\ArticleStatus;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
@@ -17,14 +18,25 @@ class ArticleVoter extends Voter
         $this->security = $security;
     }
 
-    const ASSIGN_REVIEWER = 'ASSIGN_REVIEWER';
     const DOWNLOAD = 'DOWNLOAD';
     const DETAIL = 'DETAIL';
     const COMMENT = 'COMMENT';
+    const CHANGE_STATUS = 'CHANGE_STATUS';
+    const UPDATE = 'UPDATE';
+    const ADD_REVIEWER = 'ADD_REVIEWER';
+
+    protected static $supportedAttributes = [
+        self::DOWNLOAD,
+        self::COMMENT,
+        self::DETAIL,
+        self::CHANGE_STATUS,
+        self::UPDATE,
+        self::ADD_REVIEWER,
+    ];
 
     protected function supports($attribute, $subject)
     {
-        if (!in_array($attribute, [self::ASSIGN_REVIEWER, self::DOWNLOAD, self::COMMENT, self::DETAIL])) {
+        if (!in_array($attribute, self::$supportedAttributes)) {
             return false;
         }
 
@@ -44,12 +56,16 @@ class ArticleVoter extends Voter
         }
 
         switch ($attribute) {
-            case self::ASSIGN_REVIEWER:
-                return $this->canAssignReviewer($subject, $user);
             case self::DOWNLOAD:
             case self::DETAIL:
             case self::COMMENT:
                 return $this->isEditorOrRelatedToArticle($subject, $user);
+            case self::CHANGE_STATUS:
+                return $this->canChangeStatus($subject, $user);
+            case self::UPDATE:
+                return $this->canUpdate($subject, $user);
+            case self::ADD_REVIEWER:
+                return $this->canAddReviewer($subject, $user);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -82,5 +98,47 @@ class ArticleVoter extends Voter
         }
 
         return false;
+    }
+
+    private function canChangeStatus(Article $article, User $user)
+    {
+        $allowedStatuses = [
+            ArticleStatus::STATUS_REVIEWS_FILLED,
+            ArticleStatus::STATUS_NEW_VERSION,
+        ];
+
+        if (!in_array($article->getStatus(), $allowedStatuses)) {
+            return false;
+        }
+
+        if ($this->security->isGranted('ROLE_CHIEF_EDITOR')) {
+            return true;
+        }
+
+        return $user === $article->getEditor();
+    }
+
+    private function canUpdate(Article $article, User $user)
+    {
+        return $user === $article->getOwner() && $article->getStatus() === ArticleStatus::STATUS_RETURNED;
+    }
+
+    private function canAddReviewer(Article $article, User $user)
+    {
+        $allowedStatuses = [
+            ArticleStatus::STATUS_REVIEWS_FILLED,
+            ArticleStatus::STATUS_NEW_VERSION,
+            ArticleStatus::STATUS_ASSIGNED,
+        ];
+
+        if (!in_array($article->getStatus(), $allowedStatuses)) {
+            return false;
+        }
+
+        if ($this->security->isGranted('ROLE_CHIEF_EDITOR')) {
+            return true;
+        }
+
+        return $user === $article->getEditor();
     }
 }

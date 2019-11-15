@@ -25,8 +25,13 @@
                 <td>
                     <a href="{{ path('article_detail', {id: article.id}) }}" class="btn btn-sm btn-success mb-1">Detail</a>
                     <a href="{{ path('download_article', {id: article.id}) }}" class="btn btn-sm btn-primary mb-1">Stáhnout</a>
-                    {% if article.status is constant('EditorialBundle\\Enum\\ArticleStatus::STATUS_ASSIGNED') %}
-                        <a href="{{ path('editor_article_assign_reviewers', {id: article.id}) }}" class="btn btn-sm btn-info mb-1">Vybrat recenzenty</a>
+                    {% if is_granted('ADD_REVIEWER', article) %}
+                        <a href="{{ path('editor_article_add_reviewers', {id: article.id}) }}" class="btn btn-sm btn-info mb-1">
+                            {% if article.status is constant('EditorialBundle\\Enum\\ArticleStatus::STATUS_ASSIGNED') %}Vybrat recenzenty{% else %}Přidat recenzenty{% endif %}
+                        </a>
+                    {% endif %}
+                    {% if is_granted('CHANGE_STATUS', article) %}
+                        <a href="{{ path('editor_article_change_status', {id: article.id}) }}" class="btn btn-sm btn-warning mb-1">Upravit status</a>
                     {% endif %}
                 </td>
             </tr>

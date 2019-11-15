@@ -7,6 +7,7 @@ use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\ArticleAuthor;
 use EditorialBundle\Entity\ArticleVersion;
 use EditorialBundle\Entity\User;
+use EditorialBundle\Enum\ArticleStatus;
 use EditorialBundle\Factory\EmailFactory;
 use EditorialBundle\Form\ArticleType;
 use EditorialBundle\Util\FileNameUtil;
@@ -65,7 +66,7 @@ class AuthorController extends Controller
 
                 $this->addFlash('success', 'Článek byl úspěšně vytvořen.');
 
-                return $this->redirectToRoute('editorial_dashboard');
+                return $this->redirectToRoute('author_articles_list');
             }
 
             $this->addFlash('danger', $file->getErrorMessage());
@@ -86,6 +87,55 @@ class AuthorController extends Controller
 
         return $this->render('@Editorial/Author/Article/list.html.twig', [
             'articles' => $author->getAuthorArticles(),
+        ]);
+    }
+
+    /**
+     * @Route("/clanek-{id}/upravit", name="author_article_update", methods={"GET", "POST"})
+     * @Security("is_granted('UPDATE', article)", message="Nemáte oprávnění na úpravu článku")
+     */
+    public function editArticleAction(Request $request, Article $article, EmailFactory $emailFactory)
+    {
+        $form = $this->createForm(ArticleType::class, $article);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Article $article */
+            $article = $form->getData();
+            /** @var UploadedFile $file */
+            $file = $form['file']->getData();;
+
+            if ($file && $file->isValid()) {
+                $version = new ArticleVersion();
+                $version->setSuffix($file->getClientOriginalExtension());
+
+                $article->addVersion($version);
+                $article->setStatus(ArticleStatus::STATUS_NEW_VERSION);
+
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+
+                try {
+                    $fileName = FileNameUtil::getArticleVersionFileName($version);
+                    $file->move($this->getParameter('article_directory'), $fileName);
+                } catch (FileException $exception) {
+                    $this->addFlash('danger', $exception->getMessage());
+                    return $this->redirectToRoute('editorial_dashboard');
+                }
+
+                $emailFactory->sendNewArticleVersionNotification($article);
+
+                $this->addFlash('success', 'Článek byl úspěšně upraven.');
+
+                return $this->redirectToRoute('author_articles_list');
+            }
+
+            $this->addFlash('danger', $file->getErrorMessage());
+        }
+
+        return $this->render('@Editorial/Author/Article/update.html.twig', [
+            'form' => $form->createView(),
+            'article' => $article,
         ]);
     }
 }
