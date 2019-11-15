@@ -91,12 +91,20 @@ class User implements UserInterface, \Serializable
      */
     private $reviews;
 
+    /**
+     * @var ArrayCollection|ArticleComment[]
+     *
+     * @ORM\OneToMany(targetEntity="ArticleComment", mappedBy="user", cascade={"persist"})
+     */
+    private $comments;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
         $this->authorArticles = new ArrayCollection();
         $this->editorArticles = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     /**
@@ -419,6 +427,48 @@ class User implements UserInterface, \Serializable
         return $this->reviews;
     }
 
+    /**
+     * @param ArticleComment $comment
+     * @return User
+     */
+    public function addComment(ArticleComment $comment)
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ArticleComment $comment
+     * @return User
+     */
+    public function removeComment(ArticleComment $comment)
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+
+            if ($comment->getUser() === $this) {
+                $comment->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|ArticleComment[]
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @return string
+     */
     public function getDisplayName()
     {
         return sprintf('%s (%s)', $this->username, $this->email);

@@ -399,4 +399,16 @@ class Review
 
         return '';
     }
+
+    /**
+     * @return string
+     */
+    public function getReviewerInfo()
+    {
+        if ($reviewer = $this->getReviewer()) {
+            return $reviewer->getDisplayName();
+        }
+
+        return '';
+    }
 }

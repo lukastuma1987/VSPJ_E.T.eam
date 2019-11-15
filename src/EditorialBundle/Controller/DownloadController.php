@@ -4,8 +4,10 @@
 namespace EditorialBundle\Controller;
 
 use EditorialBundle\Entity\Article;
+use EditorialBundle\Entity\ArticleVersion;
 use EditorialBundle\Entity\Magazine;
 use EditorialBundle\Factory\ResponseFactory;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,6 +40,16 @@ class DownloadController extends Controller
             throw $this->createNotFoundException('Článek neobsahuje verzi');
         }
 
-        return $responseFactory->createArticleFileResponse($article);
+        return $responseFactory->createArticleVersionFileResponse($article->getLastVersion());
+    }
+
+    /**
+     * @Route("/clanek/{articleId}/verze/{versionId}", name="download_article_version", methods={"GET"})
+     * @Entity("version", expr="repository.findByArticleAndVersionId(articleId, versionId)")
+     * @Security("is_granted('DOWNLOAD', version)", message="Nemáte oprávnění na stažení verze článku")
+     */
+    public function downloadArticleVersionAction(ArticleVersion $version, ResponseFactory $responseFactory)
+    {
+        return $responseFactory->createArticleVersionFileResponse($version);
     }
 }

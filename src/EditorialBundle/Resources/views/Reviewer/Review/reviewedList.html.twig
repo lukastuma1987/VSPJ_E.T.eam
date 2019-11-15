@@ -1,6 +1,6 @@
 {% extends '@Editorial/base.html.twig' %}
 
-{% block title %}Vaše články{% endblock %}
+{% block title %}Vámi hodnocené články{% endblock %}
 
 {% block content %}
     <h1>{{ block('title') }}</h1>
@@ -10,7 +10,7 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Název článku</th>
-            <th scope="col">Číslo časopisu</th>
+            <th scope="col">Autor</th>
             <th scope="col">Status</th>
             <th scope="col">Akce</th>
         </tr>
@@ -20,11 +20,10 @@
             <tr>
                 <th scope="row">{{ article.id }}</th>
                 <td>{{ article.name }}</td>
-                <td>{{ article.magazineChoiceName }}</td>
+                <td>{{ article.ownerInfo }}</td>
                 <td class="status-{{ article|statusClass }}">{{ article|statusName }}</td>
                 <td>
-                    <a href="{{ path('article_detail', {id: article.id}) }}" class="btn btn-sm btn-success mb-1">Detail</a>
-                    <a href="{{ path('download_article', {id: article.id}) }}" class="btn btn-sm btn-primary mb-1">Stáhnout</a>
+                    <a class="btn btn-success" href="{{ path('article_detail', {id: article.id }) }}">Detail</a>
                 </td>
             </tr>
         {% endfor %}

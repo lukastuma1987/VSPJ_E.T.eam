@@ -2,11 +2,13 @@
 
 namespace EditorialBundle\Controller;
 
+use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\Review;
 use EditorialBundle\Entity\User;
 use EditorialBundle\Enum\ArticleStatus;
 use EditorialBundle\Factory\EmailFactory;
 use EditorialBundle\Form\ReviewType;
+use EditorialBundle\Repository\ArticleRepository;
 use EditorialBundle\Repository\ReviewRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -22,7 +24,7 @@ class ReviewerController extends Controller
     /**
      * @Route("/vypis-clanku", name="reviewer_reviews_assigned_to_me", methods={"GET"})
      */
-    public function unassignedArticleListAction()
+    public function waitingForReviewListAction()
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -69,6 +71,23 @@ class ReviewerController extends Controller
         return $this->render('@Editorial/Reviewer/Review/fill.html.twig', [
             'form' => $form->createView(),
             'review' => $review,
+        ]);
+    }
+
+    /**
+     * @Route("/vypis-recenzovanych-clanku", name="reviewer_reviews_reviewed", methods={"GET"})
+     */
+    public function reviewedListAction()
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        /** @var ArticleRepository $repository */
+        $repository = $this->getDoctrine()->getRepository(Article::class);
+        /** @var Article[] $articles */
+        $articles = $repository->findReviewedByReviewer($user);
+
+        return $this->render('@Editorial/Reviewer/Review/reviewedList.html.twig', [
+            'articles' => $articles,
         ]);
     }
 }
