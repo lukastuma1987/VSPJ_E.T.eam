@@ -179,6 +179,26 @@ class EmailFactory
         $this->mailer->send($message);
     }
 
+    public function sendNewArticleVersionNotification(Article $article)
+    {
+        try {
+            $htmlBody = $this->twig->render('@Editorial/Email/newArticleVersion.html.twig', ['article' => $article]);
+            $textBody = $this->twig->render('@Editorial/Email/newArticleVersion.txt.twig', ['article' => $article]);
+        } catch (Error $e) {
+            $this->logWarning($e->getMessage(), ['service' => EmailFactory::class]);
+            return;
+        }
+
+        $message = (new \Swift_Message('Byla vytvořena nová verze článku'))
+            ->setFrom($this->sender)
+            ->setTo($article->getEditorEmail())
+            ->setBody($htmlBody, 'text/html')
+            ->addPart($textBody, 'text/plain')
+        ;
+
+        $this->mailer->send($message);
+    }
+
     // private
 
     private function logWarning($message, $context = [])

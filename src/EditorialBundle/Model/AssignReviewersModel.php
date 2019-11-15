@@ -17,7 +17,15 @@ class AssignReviewersModel
      *     max="2",
      *     minMessage="Vyberte alespoň {{ limit }} recenzenty",
      *     maxMessage="Vyberte maximálně {{ limit }} recenzenty",
-     *     exactMessage="Vyberte přesně {{ limit }} recenzenty"
+     *     exactMessage="Vyberte přesně {{ limit }} recenzenty",
+     *     groups={"New"}
+     * )
+     * @Assert\Count(
+     *     min="1",
+     *     max="2",
+     *     minMessage="Vyberte alespoň jednoho recenzenta",
+     *     maxMessage="Vyberte maximálně {{ limit }} recenzenty",
+     *     groups={"Existing"}
      * )
      */
     private $reviewers;

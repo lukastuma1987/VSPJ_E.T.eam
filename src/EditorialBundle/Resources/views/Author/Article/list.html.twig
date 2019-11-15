@@ -25,6 +25,9 @@
                 <td>
                     <a href="{{ path('article_detail', {id: article.id}) }}" class="btn btn-sm btn-success mb-1">Detail</a>
                     <a href="{{ path('download_article', {id: article.id}) }}" class="btn btn-sm btn-primary mb-1">Stáhnout</a>
+                    {% if is_granted('UPDATE', article) %}
+                        <a href="{{ path('author_article_update', {id: article.id}) }}" class="btn btn-sm btn-warning mb-1">Upravit</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
