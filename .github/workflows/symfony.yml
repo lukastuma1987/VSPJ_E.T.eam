@@ -1,0 +1,29 @@
+name: Eteam CI workflow
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@master
+      with:
+        php-version: '7.2'
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest
+
+    - name: Update database schema
+      run: php bin/console --env=test doctrine:schema:update --force
+
+    - name: Run test suite
+      run: vendor/bin/simple-phpunit

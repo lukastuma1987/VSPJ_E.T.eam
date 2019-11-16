@@ -24,15 +24,16 @@ abstract class WebTestCase extends BaseWebTestCase
             'magazines',
             'reviews',
             'article_comment',
+            'article_authors',
+            'article_versions',
         ];
 
         /** @var \Doctrine\DBAL\Connection $conn */
         $conn = $container->get('database_connection');
-        $conn->exec('SET foreign_key_checks = 0');
         foreach ($tables as $table) {
             $conn->exec('DELETE FROM '.$table);
         }
-        $conn->exec('SET foreign_key_checks = 1');
+
         $conn->exec(file_get_contents(__DIR__.'/Fixtures/fixtures.sql'));
     }
 
