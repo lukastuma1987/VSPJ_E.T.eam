@@ -17,4 +17,6 @@ swiftmailer:
 
 doctrine:
     dbal:
-        dbname: '%database_name%_test'
+        driver: pdo_sqlite
+        path: '%kernel.project_dir%/var/sqlite.db'
+        charset: UTF8
