@@ -3,6 +3,7 @@
 namespace EditorialBundle\Tests\Controller;
 
 use EditorialBundle\Entity\Article;
+use EditorialBundle\Entity\ArticleAuthor;
 use EditorialBundle\Entity\Magazine;
 use EditorialBundle\Entity\User;
 use EditorialBundle\Enum\ArticleStatus;
@@ -94,6 +95,48 @@ class EditorControllerTest extends WebTestCase
         $this->assertContains('Článek byl předán k hodnocení', $response->getContent());
     }
 
+    /**
+     * @dataProvider provideChangeStatus
+     */
+    public function testChangeStatus($currentStatus, $newStatus)
+    {
+        $article = $this->prepareArticle($currentStatus, true);
+
+        self::login($this->client, 'editor', 'editor');
+
+        $uri = sprintf('/redakce/redaktor/clanek-%d/upravit-status', $article->getId());
+        $crawler = $this->client->request('GET', $uri);
+
+        $response = $this->client->getResponse();
+        $this->assertSame(200, $response->getStatusCode());
+
+        $form = $crawler->filter('form button')->form();
+        $form['editorialbundle_articlestatus[status]']->select($newStatus);
+
+        $crawler = $this->client->submit($form);
+        $response = $this->client->getResponse();
+
+        $this->assertSame(302, $response->getStatusCode());
+
+        $crawler = $this->client->followRedirect();
+        $response = $this->client->getResponse();
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertContains('Status článku upraven', $response->getContent());
+    }
+
+    public function provideChangeStatus()
+    {
+        return [
+            [ArticleStatus::STATUS_REVIEWS_FILLED, ArticleStatus::STATUS_DECLINED],
+            [ArticleStatus::STATUS_REVIEWS_FILLED, ArticleStatus::STATUS_RETURNED],
+            [ArticleStatus::STATUS_REVIEWS_FILLED, ArticleStatus::STATUS_ACCEPTED],
+            [ArticleStatus::STATUS_NEW_VERSION, ArticleStatus::STATUS_DECLINED],
+            [ArticleStatus::STATUS_NEW_VERSION, ArticleStatus::STATUS_RETURNED],
+            [ArticleStatus::STATUS_NEW_VERSION, ArticleStatus::STATUS_ACCEPTED],
+        ];
+    }
+
     // private
 
     private function prepareArticle($articleStatus = false, $hasEditor = false)
@@ -110,8 +153,18 @@ class EditorControllerTest extends WebTestCase
         $tomorrow = new \DateTime();
         $tomorrow->modify('+1 day');
 
+        $articleAuthor = new ArticleAuthor();
+        $articleAuthor->setFullName('Foo')
+            ->setAddress('Foo')
+            ->setEmail('Foo@Foo.cz')
+            ->setWorkplace('Foo')
+        ;
+
         $article = new Article();
-        $article->setOwner($author)->setName('Foo article');
+        $article->setOwner($author)
+            ->setName('Foo article')
+            ->addAuthor($articleAuthor)
+        ;
 
         if ($articleStatus !== false) {
             $article->setStatus($articleStatus);
@@ -131,5 +184,7 @@ class EditorControllerTest extends WebTestCase
 
         $em->persist($magazine);
         $em->flush();
+
+        return $article;
     }
 }
