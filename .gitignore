@@ -17,6 +17,8 @@
 /var/uploads/magazines/*
 !/var/uploads/articles/.gitkeep
 !/var/uploads/magazines/.gitkeep
+/var/uploads/articles_test/*
+/var/uploads/magazines_test/*
 !var/SymfonyRequirements.php
 /vendor/
 /web/bundles/
