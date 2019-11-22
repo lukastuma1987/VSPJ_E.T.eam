@@ -63,8 +63,6 @@ class ArticleRepository extends EntityRepository
         }
     }
 
-
-
     public function findReviewedByReviewer(User $reviewer)
     {
         return $this->createQueryBuilder('a')

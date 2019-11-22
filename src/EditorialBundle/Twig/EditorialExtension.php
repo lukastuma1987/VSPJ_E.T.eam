@@ -4,7 +4,9 @@ namespace EditorialBundle\Twig;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use EditorialBundle\Entity\Article;
+use EditorialBundle\Entity\ArticleVersion;
 use EditorialBundle\Entity\Magazine;
+use EditorialBundle\Entity\Review;
 use EditorialBundle\Enum\ArticleStatus;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -27,6 +29,7 @@ class EditorialExtension extends AbstractExtension
             new TwigFilter('countArticlesInReview', [$this, 'getArticlesInReviewCount']),
             new TwigFilter('statusName', [$this, 'getStatusName']),
             new TwigFilter('statusClass', [$this, 'getStatusClass']),
+            new TwigFilter('articleVersion', [$this, 'getArticleVersion']),
         ];
     }
 
@@ -59,5 +62,12 @@ class EditorialExtension extends AbstractExtension
     public function getStatusClass(Article $article)
     {
         return ArticleStatus::getStatusClass($article->getStatus());
+    }
+
+    public function getArticleVersion(Review $review)
+    {
+        $repository = $this->doctrine->getRepository(ArticleVersion::class);
+
+        return $repository->findArticleVersionByReview($review);
     }
 }
