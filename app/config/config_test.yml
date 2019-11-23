@@ -1,6 +1,10 @@
 imports:
     - { resource: config_dev.yml }
 
+parameters:
+    article_directory: '%kernel.project_dir%/var/uploads/articles_test'
+    magazine_directory: '%kernel.project_dir%/var/uploads/magazines_test'
+
 framework:
     test: ~
     session:
