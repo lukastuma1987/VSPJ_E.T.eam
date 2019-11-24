@@ -23,7 +23,7 @@
                 <td>{{ article.ownerInfo }}</td>
                 <td class="status-{{ article|statusClass }}">{{ article|statusName }}</td>
                 <td>
-                    <a class="btn btn-success" href="{{ path('article_detail', {id: article.id }) }}">Detail</a>
+                    <a class="btn btn-sm mb-1 btn-success" href="{{ path('article_detail', {id: article.id }) }}">Detail</a>
                 </td>
             </tr>
         {% endfor %}

@@ -4,6 +4,7 @@ namespace EditorialBundle\Controller;
 
 use EditorialBundle\Entity\User;
 use EditorialBundle\Form\UserType;
+use EditorialBundle\Service\UserRelationFinder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,10 +68,19 @@ class AdminUserController extends Controller
     /**
      * @Route("/{id}/smazat", name="admin_user_delete", methods={"DELETE"})
      */
-    public function deleteAction(Request $request, User $user)
+    public function deleteAction(Request $request, User $user, UserRelationFinder $userRelationFinder)
     {
         if (!$this->isCsrfTokenValid('delete_user', $request->get('_token'))) {
             $this->addFlash('danger', 'Neplatný CSRF token. Zkuste to prosím znovu');
+
+            return $this->redirectToRoute('admin_user_list');
+        }
+
+        $userRelations = $userRelationFinder->findUserRelations($user);
+        if ($userRelations->hasRelations()) {
+            $message = $userRelations->getRelationMessage();
+            $message .= ' Z tohoto důvodu nemůže být odstraněn';
+            $this->addFlash('danger', $message);
 
             return $this->redirectToRoute('admin_user_list');
         }

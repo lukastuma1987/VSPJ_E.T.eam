@@ -75,4 +75,36 @@ class ArticleRepository extends EntityRepository
             ->getResult()
         ;
     }
+
+    public function countByAuthor(User $author)
+    {
+        $query =  $this->createQueryBuilder('a')
+            ->select('COUNT (a.id)')
+            ->where('a.owner = :owner')
+            ->setParameter('owner', $author)
+            ->getQuery()
+        ;
+
+        try {
+            return $query->getSingleScalarResult();
+        } catch (NonUniqueResultException $e) {
+            return 0;
+        }
+    }
+
+    public function countByEditor(User $editor)
+    {
+        $query =  $this->createQueryBuilder('a')
+            ->select('COUNT (a.id)')
+            ->where('a.editor = :editor')
+            ->setParameter('editor', $editor)
+            ->getQuery()
+        ;
+
+        try {
+            return $query->getSingleScalarResult();
+        } catch (NonUniqueResultException $e) {
+            return 0;
+        }
+    }
 }

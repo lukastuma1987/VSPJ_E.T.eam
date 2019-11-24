@@ -40,7 +40,7 @@ class EditorController extends Controller
     }
 
     /**
-     * @Route("/vypis-clanku-prirazenych-vam", name="editor_articles_assigned_to_editor_list", methods={"GET"})
+     * @Route("/vypis-clanku-prirazenych-mne", name="editor_articles_assigned_to_editor_list", methods={"GET"})
      */
     public function assignedToEditorArticleListAction()
     {
