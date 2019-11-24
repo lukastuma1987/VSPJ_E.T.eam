@@ -21,7 +21,6 @@ Pokud jste při instalaci závislostí nevyplnili/špatně zadali připojení k 
 
 ## Spuštění testů
 
-* `php bin/console --env=test doctrine:database:create` (pokud ji nemáte databázi pro testorvání již vytvořenou)
 * `php bin/console --env=test doctrine:schema:update --force`
 * `vendor\bin\simple-phpunit.bat` - Windows
 * `vendor/bin/simple-phpunit` - Linux
