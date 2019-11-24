@@ -1,0 +1,14 @@
+<li>
+    <a href="#editorSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+        <i class="fas fa-newspaper"></i>
+        Redaktor
+    </a>
+    <ul class="collapse list-unstyled" id="editorSubmenu">
+        <li>
+            <a href="{{ path('editor_unassigned_articles_list') }}">Nepřiřazené články</a>
+        </li>
+        <li>
+            <a href="{{ path('editor_articles_assigned_to_editor_list') }}">Články přiřazené mně</a>
+        </li>
+    </ul>
+</li>

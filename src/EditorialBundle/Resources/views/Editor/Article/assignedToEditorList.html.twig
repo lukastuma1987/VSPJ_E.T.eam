@@ -1,0 +1,41 @@
+{% extends '@Editorial/base.html.twig' %}
+
+{% block title %}Články přiřazené mně{% endblock %}
+
+{% block content %}
+    <h1>{{ block('title') }}</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Název článku</th>
+                <th scope="col">Číslo časopisu</th>
+                <th scope="col">Status</th>
+                <th scope="col">Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for article in articles %}
+            <tr>
+                <th scope="row">{{ article.id }}</th>
+                <td>{{ article.name }}</td>
+                <td>{{ article.magazineChoiceName }}</td>
+                <td class="status-{{ article|statusClass }}">{{ article|statusName }}</td>
+                <td>
+                    <a href="{{ path('article_detail', {id: article.id}) }}" class="btn btn-sm btn-success mb-1">Detail</a>
+                    <a href="{{ path('download_article', {id: article.id}) }}" class="btn btn-sm btn-primary mb-1">Stáhnout</a>
+                    {% if is_granted('ADD_REVIEWER', article) %}
+                        <a href="{{ path('editor_article_add_reviewers', {id: article.id}) }}" class="btn btn-sm btn-info mb-1">
+                            {% if article.status is constant('EditorialBundle\\Enum\\ArticleStatus::STATUS_ASSIGNED') %}Vybrat recenzenty{% else %}Přidat recenzenty{% endif %}
+                        </a>
+                    {% endif %}
+                    {% if is_granted('CHANGE_STATUS', article) %}
+                        <a href="{{ path('editor_article_change_status', {id: article.id}) }}" class="btn btn-sm btn-warning mb-1">Upravit status</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

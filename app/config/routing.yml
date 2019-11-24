@@ -1,0 +1,12 @@
+editorial:
+    resource: "@EditorialBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+front:
+    resource: "@FrontBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+logout:
+    path: /logout

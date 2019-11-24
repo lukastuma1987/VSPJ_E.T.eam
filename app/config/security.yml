@@ -1,0 +1,32 @@
+security:
+    encoders:
+        EditorialBundle\Entity\User:
+            algorithm: bcrypt
+            cost: 12
+
+    providers:
+        editorial_provider:
+            entity:
+                class: EditorialBundle\Entity\User
+
+    role_hierarchy:
+        ROLE_CHIEF_EDITOR: ROLE_EDITOR
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            anonymous: ~
+            logout_on_user_change: true
+            form_login:
+                login_path: login
+                check_path: login
+                default_target_path: editorial_dashboard
+            logout:
+                path: logout
+                target: homepage
+
+    access_control:
+        - { path: '^/redakce', roles: [ROLE_AUTHOR, ROLE_REVIEWER, ROLE_EDITOR, ROLE_ADMIN] }

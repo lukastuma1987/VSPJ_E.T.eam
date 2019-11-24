@@ -1,0 +1,32 @@
+{% extends '@Editorial/base.html.twig' %}
+
+{% block title %}Vámi hodnocené články{% endblock %}
+
+{% block content %}
+    <h1>{{ block('title') }}</h1>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Název článku</th>
+            <th scope="col">Autor</th>
+            <th scope="col">Status</th>
+            <th scope="col">Akce</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for article in articles %}
+            <tr>
+                <th scope="row">{{ article.id }}</th>
+                <td>{{ article.name }}</td>
+                <td>{{ article.ownerInfo }}</td>
+                <td class="status-{{ article|statusClass }}">{{ article|statusName }}</td>
+                <td>
+                    <a class="btn btn-sm mb-1 btn-success" href="{{ path('article_detail', {id: article.id }) }}">Detail</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

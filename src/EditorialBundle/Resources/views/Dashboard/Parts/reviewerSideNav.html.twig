@@ -1,0 +1,14 @@
+<li>
+    <a href="#reviewerSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+        <i class="fas fa-spell-check"></i>
+        Recenzent
+    </a>
+    <ul class="collapse list-unstyled" id="reviewerSubmenu">
+        <li>
+            <a href="{{ path('reviewer_reviews_assigned_to_me') }}">Články čekající na hodnocení</a>
+        </li>
+        <li>
+            <a href="{{ path('reviewer_reviews_reviewed') }}">Vámi hodnocené články</a>
+        </li>
+    </ul>
+</li>

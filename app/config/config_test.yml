@@ -1,0 +1,26 @@
+imports:
+    - { resource: config_dev.yml }
+
+parameters:
+    article_directory: '%kernel.project_dir%/var/uploads/articles_test'
+    magazine_directory: '%kernel.project_dir%/var/uploads/magazines_test'
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false
+
+swiftmailer:
+    disable_delivery: true
+
+doctrine:
+    dbal:
+        driver: pdo_sqlite
+        path: '%kernel.project_dir%/var/sqlite.db'
+        charset: UTF8

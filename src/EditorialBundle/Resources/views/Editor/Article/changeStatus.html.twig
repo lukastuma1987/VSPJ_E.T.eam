@@ -1,0 +1,16 @@
+{% extends '@Editorial/base.html.twig' %}
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block title %}Upravit status{% endblock %}
+
+{% block content %}
+    <h1>Upravit status</h1>
+    <ul class="list-group list-group-flush mb-5">
+        <li class="list-group-item"><b>Článek:</b> {{ article.name }}</li>
+        <li class="list-group-item"><b>Aktuální status:</b> <span class="status-{{ article|statusClass }}">{{ article|statusName }}</span></li>
+    </ul>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-primary">Upravit</button>
+    {{ form_end(form) }}
+{% endblock %}

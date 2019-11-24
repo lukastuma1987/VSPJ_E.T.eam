@@ -1,0 +1,14 @@
+<h1>Byla vložena nová verze článku</h1>
+
+<b>Název:</b> {{ article.name }}<br>
+<b>Číslo časopisu:</b>
+<ul>
+    <li>ročník - {{ article.magazineYear }}</li>
+    <li>číslo - {{ article.magazineNumber }}</li>
+</ul>
+<b>Autoři:</b>
+<ul>
+{% for author in article.authors %}
+    <li>{{ author.fullName }}</li>
+{% endfor %}
+</ul>

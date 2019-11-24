@@ -1,0 +1,10 @@
+Dobrý den<br>
+<br>
+Žádáme Vás o hodnocení článku "{{ review.articleName }}".<br>
+<br>
+Nejzažší termín odevzdání je {{ review.deadline|date('d. m. Y') }}<br>
+<br>
+Články čekající na Vaše hodnocení naleznete na
+<a href="{{ url('reviewer_reviews_assigned_to_me') }}">{{ url('reviewer_reviews_assigned_to_me') }}</a><br>
+<br>
+Logos Polytechnikos<br>

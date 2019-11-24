@@ -1,0 +1,34 @@
+{% extends '@Editorial/base.html.twig' %}
+
+{% block title %}Nástěnka{% endblock %}
+
+{% block content %}
+    <h1>Nadcházející čísla časopisu</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Ročník</th>
+                <th scope="col">Číslo</th>
+                <th scope="col">Témata</th>
+                <th scope="col">Datum vydání</th>
+                <th scope="col">Datum uzávěrky</th>
+                <th scope="col">Počet článků</th>
+                <th scope="col">Počet článků<br/> v recenzním řízení</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for magazine in magazines %}
+            <tr>
+                <td>{{ magazine.year }}</td>
+                <td>{{ magazine.number }}</td>
+                <td>{{ magazine.topicsString }}</td>
+                <td>{{ magazine.publishDate|date('F Y') }}</td>
+                <td>{{ magazine.deadlineDate|date('d. m. Y') }}</td>
+                <td>{{ magazine|countArticles }}</td>
+                <td>{{ magazine|countArticlesInReview }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends '@Editorial/base.html.twig' %}
+
+{% block title %}Podrobnosti k článku{% endblock %}
+
+{% block content %}
+    <h1>Podrobnosti k článku {{ article.name }}</h1>
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><b>Číslo časopisu:</b> ročník - {{ article.magazineYear }}, číslo {{ article.magazineNumber }}</li>
+        <li class="list-group-item"><b>Vlastník:</b> {{ article.ownerInfo }}</li>
+        <li class="list-group-item"><b>Vytvořeno:</b> {{ article.created|date('d. m. Y') }}</li>
+        <li class="list-group-item"><b>Status:</b> <span class="status-{{ article|statusClass }}">{{ article|statusName }}</span></li>
+    </ul>
+
+    <h2 class="mt-5">Autoři</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Jméno</th>
+                <th scope="col">Pracoviště</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for author in article.authors %}
+            <tr>
+                <td>{{ author.fullName }}</td>
+                <td>{{ author.workplace }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="mt-5">Verze článku</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Verze</th>
+            <th scope="col">Vytvořeno dne</th>
+            <th scope="col">Akce</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for version in article.versions %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{ version.created|date('d. m. Y') }}</td>
+                <td>
+                    <a href="{{ path('download_article_version', {articleId: article.id, versionId: version.id}) }}" class="btn btn-sm btn-primary mb-1">Stáhnout</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="mt-5">Posudky</h2>
+    <table class="table table-striped review-table">
+        <thead>
+        <tr>
+            <th scope="col">Recenzent</th>
+            <th scope="col">Vytvořeno dne</th>
+            <th scope="col">Aktuálnost, zajímavost a přínosnost</th>
+            <th scope="col">Originalita</th>
+            <th scope="col">Odborná úroveň</th>
+            <th scope="col">Jazyková a stylistická úroveň</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for review in article.reviews %}
+            {% if review.review %}
+            <tr>
+                <th scope="row">{{ review.reviewerInfo }}</th>
+                <td>{{ review.filled|date('d. m. Y') }}</td>
+                <td>{{ review.benefitLevel }}</td>
+                <td>{{ review.originalityLevel }}</td>
+                <td>{{ review.professionalLevel }}</td>
+                <td>{{ review.languageLevel }}</td>
+            </tr>
+            <tr>
+                <td colspan="6">{{ review.review }}</td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="mt-5" id="diskuse">Diskuse</h2>
+    <hr>
+    {% for comment in article.comments %}
+        <h5>{{ comment.userInfo }} {{ comment.created|date('d. m. Y H:i') }}</h5>
+        <p>{{ comment.content }}</p>
+        <hr>
+    {% endfor %}
+    <a class="btn btn-primary" href="{{ path('article_comment_add', {id: article.id}) }}">Přidat komentář</a>
+{% endblock %}
