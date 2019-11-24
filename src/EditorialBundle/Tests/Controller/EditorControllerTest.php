@@ -67,7 +67,7 @@ class EditorControllerTest extends WebTestCase
 
         self::login($this->client, 'editor', 'editor');
 
-        $crawler = $this->client->request('GET', '/redakce/redaktor/vypis-clanku-prirazenych-vam');
+        $crawler = $this->client->request('GET', '/redakce/redaktor/vypis-clanku-prirazenych-mne');
         $response = $this->client->getResponse();
 
         $this->assertTrue($response->isOk());
