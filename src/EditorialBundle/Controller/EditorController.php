@@ -166,12 +166,22 @@ class EditorController extends Controller
                 $emailFactory->sendStatusChangedNotification($article);
             }
 
+            if ($article->getStatus() === ArticleStatus::STATUS_DECLINED && !$article->getEditor()) {
+                /** @var User $editor */
+                $editor = $this->getUser();
+                $article->setEditor($editor);
+            }
+
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
             $this->addFlash('success', 'Status článku upraven');
 
-            return $this->redirectToRoute('editor_articles_assigned_to_editor_list');
+            if ($article->getStatus() === ArticleStatus::STATUS_NEED_INFO) {
+                return $this->redirectToRoute('editor_unassigned_articles_list');
+            } else {
+                return $this->redirectToRoute('editor_articles_assigned_to_editor_list');
+            }
         }
 
         return $this->render('@Editorial/Editor/Article/changeStatus.html.twig', [

@@ -49,16 +49,6 @@ class EmailFactory
      */
     public function sendNewArticleNotification(Article $article)
     {
-        /** @var UserRepository $repository */
-        $repository = $this->doctrine->getRepository(User::class);
-        /** @var User[] $editors */
-        $editors = $repository->findEditors();
-        $recipients = [];
-
-        foreach ($editors as $editor) {
-            $recipients[] = $editor->getEmail();
-        }
-
         try {
             $htmlBody = $this->twig->render('@Editorial/Email/newArticle.html.twig', ['article' => $article]);
             $textBody = $this->twig->render('@Editorial/Email/newArticle.txt.twig', ['article' => $article]);
@@ -69,7 +59,7 @@ class EmailFactory
 
         $message = (new \Swift_Message('Přidán nový článek'))
             ->setFrom($this->sender)
-            ->setTo($recipients)
+            ->setTo($this->getEditorsEmails())
             ->setBody($htmlBody, 'text/html')
             ->addPart($textBody, 'text/plain')
         ;
@@ -181,6 +171,8 @@ class EmailFactory
 
     public function sendNewArticleVersionNotification(Article $article)
     {
+        $recipient = $article->getEditorEmail() ?: $this->getEditorsEmails();
+
         try {
             $htmlBody = $this->twig->render('@Editorial/Email/newArticleVersion.html.twig', ['article' => $article]);
             $textBody = $this->twig->render('@Editorial/Email/newArticleVersion.txt.twig', ['article' => $article]);
@@ -191,7 +183,7 @@ class EmailFactory
 
         $message = (new \Swift_Message('Byla vytvořena nová verze článku'))
             ->setFrom($this->sender)
-            ->setTo($article->getEditorEmail())
+            ->setTo($recipient)
             ->setBody($htmlBody, 'text/html')
             ->addPart($textBody, 'text/plain')
         ;
@@ -206,5 +198,20 @@ class EmailFactory
         if ($this->logger) {
             $this->logger->warning($message, $context);
         }
+    }
+
+    private function getEditorsEmails()
+    {
+        /** @var UserRepository $repository */
+        $repository = $this->doctrine->getRepository(User::class);
+        /** @var User[] $editors */
+        $editors = $repository->findEditors();
+        $recipients = [];
+
+        foreach ($editors as $editor) {
+            $recipients[] = $editor->getEmail();
+        }
+
+        return $recipients;
     }
 }
