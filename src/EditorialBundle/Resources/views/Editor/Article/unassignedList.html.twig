@@ -25,6 +25,7 @@
                     <td>{{ article.magazineChoiceName }}</td>
                     <td class="status-{{ article|statusClass }}">{{ article|statusName }}</td>
                     <td>
+                        <a href="{{ path('article_detail', {id: article.id}) }}" class="btn btn-sm btn-info mb-1">Detail</a>
                         <a href="{{ path('download_article', {id: article.id}) }}" class="btn btn-sm btn-primary mb-1">Stáhnout</a>
                         <form class="d-inline" action="{{ path('editor_article_assign', {id: article.id}) }}" method="post">
                             <input type="hidden" name="_token" value="{{ csrf_token('assign_article') }}">
