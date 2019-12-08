@@ -6,7 +6,8 @@ abstract class ArticleStatus
 {
     const STATUS_DECLINED = 0;
     const STATUS_NEW = 1;
-    const STATUS_ASSIGNED = 2;
+    const STATUS_NEED_INFO = 3;
+    const STATUS_ASSIGNED = 5;
     const STATUS_REVIEWERS_ASSIGNED = 10;
     const STATUS_REVIEWS_FILLED = 20;
     const STATUS_RETURNED = 30;
@@ -16,6 +17,7 @@ abstract class ArticleStatus
     private static $statusNames = [
         self::STATUS_DECLINED => 'Zamítnuto',
         self::STATUS_NEW => 'Nový',
+        self::STATUS_NEED_INFO => 'Vráceno k doplnění',
         self::STATUS_ASSIGNED => 'Přijato do recenzního řízení',
         self::STATUS_REVIEWERS_ASSIGNED => 'Předáno recenzentům',
         self::STATUS_REVIEWS_FILLED => 'Hodnocení vyplněna',
@@ -27,6 +29,7 @@ abstract class ArticleStatus
     private static $statusClass = [
         self::STATUS_DECLINED => 'declined',
         self::STATUS_NEW => 'new',
+        self::STATUS_NEED_INFO => 'need-info',
         self::STATUS_ASSIGNED => 'assigned',
         self::STATUS_REVIEWERS_ASSIGNED => 'reviewers-assigned',
         self::STATUS_REVIEWS_FILLED => 'reviews-filled',

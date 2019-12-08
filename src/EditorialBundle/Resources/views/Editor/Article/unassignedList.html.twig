@@ -30,6 +30,9 @@
                             <input type="hidden" name="_token" value="{{ csrf_token('assign_article') }}">
                             <button class="btn btn-sm btn-success mb-1">Začít recenzní řízení</button>
                         </form>
+                        {% if is_granted('CHANGE_STATUS', article) %}
+                            <a href="{{ path('editor_article_change_status', {id: article.id}) }}" class="btn btn-sm btn-warning mb-1">Upravit status</a>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
