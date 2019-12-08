@@ -117,7 +117,9 @@ class ArticleVoter extends Voter
             return true;
         }
 
-        return $user === $article->getEditor();
+        $articleEditor = $article->getEditor();
+
+        return $articleEditor === null || $user === $articleEditor;
     }
 
     private function canUpdate(Article $article, User $user)
