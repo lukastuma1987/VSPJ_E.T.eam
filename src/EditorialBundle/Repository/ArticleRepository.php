@@ -28,8 +28,15 @@ class ArticleRepository extends EntityRepository
 
     public function findUnassigned()
     {
+        $allowedStatuses = [
+            ArticleStatus::STATUS_NEW,
+            ArticleStatus::STATUS_NEW_VERSION,
+        ];
+
         return $this->createQueryBuilder('a')
             ->where('a.editor IS NULL')
+            ->andWhere('a.status IN (:allowedStatuses)')
+            ->setParameter('allowedStatuses', $allowedStatuses)
             ->getQuery()
             ->getResult()
         ;

@@ -103,6 +103,8 @@ class ArticleVoter extends Voter
     private function canChangeStatus(Article $article, User $user)
     {
         $allowedStatuses = [
+            ArticleStatus::STATUS_NEW,
+            ArticleStatus::STATUS_NEED_INFO,
             ArticleStatus::STATUS_REVIEWS_FILLED,
             ArticleStatus::STATUS_NEW_VERSION,
         ];
@@ -120,7 +122,12 @@ class ArticleVoter extends Voter
 
     private function canUpdate(Article $article, User $user)
     {
-        return $user === $article->getOwner() && $article->getStatus() === ArticleStatus::STATUS_RETURNED;
+        $allowedStatuses = [
+            ArticleStatus::STATUS_NEED_INFO,
+            ArticleStatus::STATUS_RETURNED,
+        ];
+
+        return $user === $article->getOwner() && in_array($article->getStatus(), $allowedStatuses);
     }
 
     private function canAddReviewer(Article $article, User $user)
