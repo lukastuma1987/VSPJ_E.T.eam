@@ -47,4 +47,9 @@ abstract class ArticleStatus
     {
         return array_key_exists($status, self::$statusClass) ? self::$statusClass[$status] : 'unknown';
     }
+
+    public static function getAllAvailableStatuses()
+    {
+        return self::$statusNames;
+    }
 }

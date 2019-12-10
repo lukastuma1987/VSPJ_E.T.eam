@@ -1,0 +1,3 @@
+{% macro nav(pagination, field, name) %}
+    <th{% if pagination.isSorted(field) %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, name, field) }}</th>
+{% endmacro %}

@@ -3,7 +3,6 @@
 namespace EditorialBundle\Tests\Controller;
 
 use EditorialBundle\Entity\Article;
-use EditorialBundle\Entity\ArticleAuthor;
 use EditorialBundle\Entity\ArticleVersion;
 use EditorialBundle\Entity\Magazine;
 use EditorialBundle\Entity\Review;

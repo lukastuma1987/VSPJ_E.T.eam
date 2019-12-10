@@ -2,12 +2,10 @@
 
 namespace EditorialBundle\Factory;
 
-use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\ArticleVersion;
 use EditorialBundle\Entity\Magazine;
 use EditorialBundle\Util\FileNameUtil;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 class ResponseFactory
 {

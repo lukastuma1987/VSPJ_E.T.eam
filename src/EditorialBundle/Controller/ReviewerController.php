@@ -2,14 +2,14 @@
 
 namespace EditorialBundle\Controller;
 
-use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\Review;
 use EditorialBundle\Entity\User;
 use EditorialBundle\Enum\ArticleStatus;
 use EditorialBundle\Factory\EmailFactory;
+use EditorialBundle\Form\Filter\ReviewerFilterType;
 use EditorialBundle\Form\ReviewType;
-use EditorialBundle\Repository\ArticleRepository;
-use EditorialBundle\Repository\ReviewRepository;
+use EditorialBundle\Pagination\ArticlePaginator;
+use EditorialBundle\Pagination\ReviewPaginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,17 +24,19 @@ class ReviewerController extends Controller
     /**
      * @Route("/vypis-clanku", name="reviewer_reviews_assigned_to_me", methods={"GET"})
      */
-    public function waitingForReviewListAction()
+    public function waitingForReviewListAction(ReviewPaginator $reviewPaginator)
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        /** @var ReviewRepository $repository */
-        $repository = $this->getDoctrine()->getRepository(Review::class);
-        /** @var Review[] $reviews */
-        $reviews = $repository->findEmptyByReviewer($user);
+        /** @var User $reviewer */
+        $reviewer = $this->getUser();
+
+        try {
+            $pagination = $reviewPaginator->paginateEmptyByReviewer($reviewer);
+        } catch (\Exception $exception) {
+            return $this->redirectToRoute('reviewer_reviews_assigned_to_me');
+        }
 
         return $this->render('@Editorial/Reviewer/Review/waitingForReviewList.html.twig', [
-            'reviews' => $reviews,
+            'pagination' => $pagination,
         ]);
     }
 
@@ -77,17 +79,22 @@ class ReviewerController extends Controller
     /**
      * @Route("/vypis-recenzovanych-clanku", name="reviewer_reviews_reviewed", methods={"GET"})
      */
-    public function reviewedListAction()
+    public function reviewedListAction(Request $request, ArticlePaginator $articlePaginator)
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        /** @var ArticleRepository $repository */
-        $repository = $this->getDoctrine()->getRepository(Article::class);
-        /** @var Article[] $articles */
-        $articles = $repository->findReviewedByReviewer($user);
+        /** @var User $reviewer */
+        $reviewer = $this->getUser();
+        $form = $this->createForm(ReviewerFilterType::class, null, ['method' => 'GET']);
+        $form->handleRequest($request);
+
+        try {
+            $pagination = $articlePaginator->paginateByReviewer($reviewer, $form->getData());
+        } catch (\Exception $exception) {
+            return $this->redirectToRoute('reviewer_reviews_reviewed');
+        }
 
         return $this->render('@Editorial/Reviewer/Review/reviewedList.html.twig', [
-            'articles' => $articles,
+            'pagination' => $pagination,
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -32,7 +32,7 @@ class ArticleType extends AbstractType
                 'choice_label' => 'choiceName',
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('m')
-                        ->where('m.publishDate > :now')
+                        ->where('m.deadlineDate > :now')
                         ->setParameter('now', new \DateTime())
                     ;
                 }
