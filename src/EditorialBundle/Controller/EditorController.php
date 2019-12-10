@@ -8,7 +8,6 @@ use EditorialBundle\Entity\Review;
 use EditorialBundle\Entity\User;
 use EditorialBundle\Enum\ArticleStatus;
 use EditorialBundle\Factory\EmailFactory;
-use EditorialBundle\Factory\ResponseFactory;
 use EditorialBundle\Form\ArticleStatusType;
 use EditorialBundle\Form\AssignReviewersType;
 use EditorialBundle\Model\AssignReviewersModel;

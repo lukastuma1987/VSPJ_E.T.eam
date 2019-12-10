@@ -2,20 +2,12 @@
 
 namespace EditorialBundle\Form;
 
-use Doctrine\ORM\EntityRepository;
 use EditorialBundle\Entity\Article;
-use EditorialBundle\Entity\Magazine;
 use EditorialBundle\Enum\ArticleStatus;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ArticleStatusType extends AbstractType
 {

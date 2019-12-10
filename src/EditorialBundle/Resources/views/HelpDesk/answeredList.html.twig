@@ -1,0 +1,34 @@
+{% extends '@Editorial/base.html.twig' %}
+
+{% block title %}Zodpovězené helpdesk zprávy{% endblock %}
+
+{% block content %}
+    <h1>{{ block('title') }}</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Vytvořeno</th>
+                <th scope="col">Náhled</th>
+                <th scope="col">Odpověděl</th>
+                <th scope="col">Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in messages %}
+                <tr>
+                    <th scope="row">{{ message.id }}</th>
+                    <td>{{ message.email }}</td>
+                    <td>{{ message.created|date('d. m. Y H:i') }}</td>
+                    <td>{{ message.message|slice(0, 50) }}...</td>
+                    <td>{{ message.managerInfo }}</td>
+                    <td>
+                        <a href="{{ path('help_desk_detail', {id: message.id}) }}" class="btn btn-sm btn-primary mb-1">Detail</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
