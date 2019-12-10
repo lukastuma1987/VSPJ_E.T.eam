@@ -57,16 +57,23 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
         }
     }
 
-    public function findEditors()
+    public function findEditors($chiefOnly = false)
     {
-        return $this->createQueryBuilder('u')
+        $qb = $this->createQueryBuilder('u')
             ->join('u.roles', 'r')
-            ->where('r.role = :roleEditor OR r.role = :roleChiefEditor')
-            ->setParameter('roleEditor', 'ROLE_EDITOR')
-            ->setParameter('roleChiefEditor', 'ROLE_CHIEF_EDITOR')
-            ->getQuery()
-            ->getResult()
         ;
+
+        if ($chiefOnly) {
+            $qb->where('r.role = :roleChiefEditor')
+                ->setParameter('roleChiefEditor', 'ROLE_CHIEF_EDITOR');
+        } else {
+            $qb->where('r.role = :roleEditor')
+                ->orWhere('r.role = :roleChiefEditor')
+                ->setParameter('roleEditor', 'ROLE_EDITOR')
+                ->setParameter('roleChiefEditor', 'ROLE_CHIEF_EDITOR');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     public function findReviewersByArticle(Article $article)
