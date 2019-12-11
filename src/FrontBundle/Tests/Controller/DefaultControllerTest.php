@@ -2,8 +2,8 @@
 
 namespace FrontBundle\Tests\Controller;
 
+use EditorialBundle\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DefaultControllerTest extends WebTestCase
 {
@@ -40,6 +40,52 @@ class DefaultControllerTest extends WebTestCase
             ['/', 'Logos Polytechnikos'],
             ['/cisla-casopisu', 'Čísla časopisu'],
             ['/o-casopise', 'vysokoškolský odborný recenzovaný časopis'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideHelpDesk
+     */
+    public function testHelpDesk($username, $expectedEmail)
+    {
+        if ($username) {
+            self::login($this->client, $username, $username);
+        }
+
+        $crawler = $this->client->request('GET', '/helpdesk');
+        $response = $this->client->getResponse();
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        if ($expectedEmail) {
+            $this->assertContains($expectedEmail, $response->getContent());
+        }
+
+        $form = $crawler->filter('form button')->form();
+        $form['editorialbundle_helpdeskmessage[email]'] = 'foo@foo.cz';
+        $form['editorialbundle_helpdeskmessage[message]'] = 'Foo';
+
+        $crawler = $this->client->submit($form);
+        $response = $this->client->getResponse();
+
+        $this->assertSame(302, $response->getStatusCode());
+
+        $crawler = $this->client->followRedirect();
+        $response = $this->client->getResponse();
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertContains('Vaše zpráva byla úspěšně odeslána', $response->getContent());
+    }
+
+    public function provideHelpDesk()
+    {
+        return [
+            [null, ''],
+            ['author', 'author@author.cz'],
+            ['reviewer', 'reviewer@reviewer.cz'],
+            ['editor', 'editor@editor.cz'],
+            ['chiefeditor', 'chiefeditor@chiefeditor.cz'],
+            ['admin', 'admin@admin.cz'],
         ];
     }
 }

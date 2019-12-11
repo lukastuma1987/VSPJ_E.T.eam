@@ -36,6 +36,9 @@
             {% if is_granted('ROLE_ADMIN') %}
                 {{ include('@Editorial/Dashboard/Parts/adminSideNav.html.twig') }}
             {% endif %}
+            {% if is_granted('ROLE_HELP_DESK') %}
+                {{ include('@Editorial/Dashboard/Parts/helpDeskSideNav.html.twig') }}
+            {% endif %}
         </ul>
     </nav>
 
