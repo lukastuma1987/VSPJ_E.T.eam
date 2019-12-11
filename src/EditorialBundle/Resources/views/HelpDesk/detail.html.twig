@@ -1,0 +1,16 @@
+{% extends '@Editorial/base.html.twig' %}
+
+{% block title %}Detail zprávy z helpdesku{% endblock %}
+
+{% block content %}
+    <h1>{{ block('title') }}</h1>
+    <h4>Zpráva</h4>
+    <p>{{ message.message }}</p>
+    <h4>Odpověď</h4>
+    <p>{{ message.answer }}</p>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><b>Vytvořeno:</b> {{ message.created|date('d. m. Y') }}</li>
+        <li class="list-group-item"><b>Zodpovězeno:</b> {{ message.answered|date('d. m. Y') }}</li>
+        <li class="list-group-item"><b>Zodpověděl:</b> {{ message.managerInfo }}</li>
+    </ul>
+{% endblock %}
