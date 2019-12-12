@@ -2,10 +2,14 @@
 
 namespace FrontBundle\Controller;
 
+use EditorialBundle\Entity\HelpDeskMessage;
 use EditorialBundle\Entity\Magazine;
+use EditorialBundle\Entity\User;
 use EditorialBundle\Factory\ResponseFactory;
+use EditorialBundle\Form\HelpDeskMessageType;
 use EditorialBundle\Repository\MagazineRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends Controller
@@ -54,5 +58,38 @@ class DefaultController extends Controller
     public function oCasopiseAction()
     {
         return $this->render('@Front/Default/oCasopise.html.twig');
+    }
+
+    /**
+     * @Route("/helpdesk", name="helpdesk", methods={"GET", "POST"})
+     */
+    public function helpDeskAction(Request $request)
+    {
+        $message = new HelpDeskMessage();
+
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $message->setEmail($user->getEmail());
+        }
+
+        $form = $this->createForm(HelpDeskMessageType::class, $message);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $message = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($message);
+            $em->flush();
+
+            $this->addFlash('success', 'Vaše zpráva byla úspěšně odeslána');
+
+            return $this->redirectToRoute('helpdesk');
+        }
+
+        return $this->render('@Front/Default/helpDesk.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

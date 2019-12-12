@@ -2,11 +2,7 @@
 
 namespace EditorialBundle\Tests\Controller;
 
-use EditorialBundle\Entity\Article;
-use EditorialBundle\Entity\Magazine;
-use EditorialBundle\Entity\Review;
 use EditorialBundle\Entity\User;
-use EditorialBundle\Enum\ArticleStatus;
 use EditorialBundle\Repository\UserRepository;
 use EditorialBundle\Tests\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;

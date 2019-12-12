@@ -1,0 +1,36 @@
+{% extends '@Editorial/base.html.twig' %}
+
+{% block title %}Nezodpovězené helpdesk zprávy{% endblock %}
+
+{% block content %}
+    <h1>{{ block('title') }}</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Vytvořeno</th>
+                <th scope="col">Náhled</th>
+                <th scope="col">Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in messages %}
+                <tr>
+                    <th scope="row">{{ message.id }}</th>
+                    <td>{{ message.email }}</td>
+                    <td>{{ message.created|date('d. m. Y H:i') }}</td>
+                    <td>{{ message.message|slice(0, 50) }}...</td>
+                    <td>
+                        <a href="{{ path('help_desk_add_answer', {id: message.id}) }}" class="btn btn-sm btn-success mb-1">Odpovědět</a>
+                        <form class="d-inline" action="{{ path('help_desk_ignore', {id: message.id}) }}" method="post" onsubmit="return confirm('Jste si jistý')">
+                            <input type="hidden" name="_token" value="{{ csrf_token('help_desk_ignore') }}">
+                            <button class="btn btn-sm btn-danger mb-1">Ignorovat</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

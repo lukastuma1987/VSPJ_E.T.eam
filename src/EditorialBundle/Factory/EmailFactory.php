@@ -3,6 +3,7 @@
 namespace EditorialBundle\Factory;
 
 use EditorialBundle\Entity\Article;
+use EditorialBundle\Entity\HelpDeskMessage;
 use EditorialBundle\Entity\Review;
 use EditorialBundle\Entity\User;
 use EditorialBundle\Repository\UserRepository;
@@ -184,6 +185,26 @@ class EmailFactory
         $message = (new \Swift_Message('Byla vytvořena nová verze článku'))
             ->setFrom($this->sender)
             ->setTo($recipient)
+            ->setBody($htmlBody, 'text/html')
+            ->addPart($textBody, 'text/plain')
+        ;
+
+        $this->mailer->send($message);
+    }
+
+    public function sendHelpDeskAnswer(HelpDeskMessage $message)
+    {
+        try {
+            $htmlBody = $this->twig->render('@Editorial/Email/helpDeskAnswer.html.twig', ['message' => $message]);
+            $textBody = $this->twig->render('@Editorial/Email/helpDeskAnswer.txt.twig', ['message' => $message]);
+        } catch (Error $e) {
+            $this->logWarning($e->getMessage(), ['service' => EmailFactory::class]);
+            return;
+        }
+
+        $message = (new \Swift_Message('Odpověď na Vaši zprávu z helpdesku'))
+            ->setFrom($this->sender)
+            ->setTo($message->getEmail())
             ->setBody($htmlBody, 'text/html')
             ->addPart($textBody, 'text/plain')
         ;

@@ -5,7 +5,6 @@ namespace EditorialBundle\Controller;
 
 use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\Magazine;
-use EditorialBundle\Factory\ResponseFactory;
 use EditorialBundle\Form\MagazineType;
 use EditorialBundle\Form\MagazineUploadType;
 use EditorialBundle\Repository\MagazineRepository;
