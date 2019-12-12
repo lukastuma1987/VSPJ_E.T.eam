@@ -163,6 +163,10 @@ class EditorController extends Controller
 
             if ($article->getStatus() !== $status) {
                 $emailFactory->sendStatusChangedNotification($article);
+
+                if ($article->getStatus() === ArticleStatus::STATUS_CHIEF_NEEDED) {
+                    $emailFactory->sendChiefNeededNotification($article);
+                }
             }
 
             if ($article->getStatus() === ArticleStatus::STATUS_DECLINED && !$article->getEditor()) {

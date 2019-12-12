@@ -13,6 +13,7 @@ class ArticleStatusType extends AbstractType
 {
     private static $defaultChoices = [
         ArticleStatus::STATUS_RETURNED,
+        ArticleStatus::STATUS_CHIEF_NEEDED,
         ArticleStatus::STATUS_ACCEPTED,
         ArticleStatus::STATUS_DECLINED,
     ];
@@ -66,7 +67,11 @@ class ArticleStatusType extends AbstractType
         $statusChoices = [];
 
         foreach ($choices as $choice) {
-            $statusChoices[ArticleStatus::getStatusName($choice)] = $choice;
+            if ($choice === ArticleStatus::STATUS_CHIEF_NEEDED) {
+                $statusChoices['Vyžádat zásah šéfredaktora'] = $choice;
+            } else {
+                $statusChoices[ArticleStatus::getStatusName($choice)] = $choice;
+            }
         }
 
         return $statusChoices;
