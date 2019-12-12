@@ -212,6 +212,28 @@ class EmailFactory
         $this->mailer->send($message);
     }
 
+    public function sendChiefNeededNotification(Article $article)
+    {
+        $recipient = $this->getEditorsEmails(true);
+
+        try {
+            $htmlBody = $this->twig->render('@Editorial/Email/chiefNeededNotification.html.twig', ['article' => $article]);
+            $textBody = $this->twig->render('@Editorial/Email/chiefNeededNotification.txt.twig', ['article' => $article]);
+        } catch (Error $e) {
+            $this->logWarning($e->getMessage(), ['service' => EmailFactory::class]);
+            return;
+        }
+
+        $message = (new \Swift_Message('Je vyžadován zásah šéfredaktora'))
+            ->setFrom($this->sender)
+            ->setTo($recipient)
+            ->setBody($htmlBody, 'text/html')
+            ->addPart($textBody, 'text/plain')
+        ;
+
+        $this->mailer->send($message);
+    }
+
     // private
 
     private function logWarning($message, $context = [])
@@ -221,12 +243,12 @@ class EmailFactory
         }
     }
 
-    private function getEditorsEmails()
+    private function getEditorsEmails($chiefOnly = false)
     {
         /** @var UserRepository $repository */
         $repository = $this->doctrine->getRepository(User::class);
         /** @var User[] $editors */
-        $editors = $repository->findEditors();
+        $editors = $repository->findEditors($chiefOnly);
         $recipients = [];
 
         foreach ($editors as $editor) {

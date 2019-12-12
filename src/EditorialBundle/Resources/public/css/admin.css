@@ -209,6 +209,11 @@ i, span {
     color: #28a745;
 }
 
+.status-chief-needed {
+    font-weight: bold;
+    color: #2e002a;
+}
+
 @media (max-width: 768px) {
     #sidebar {
         min-width: 80px;
