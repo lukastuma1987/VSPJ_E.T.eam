@@ -26,11 +26,13 @@
                     <td>{{ user.displayRole }}</td>
                     <td>
                         <a href="{{ path('admin_user_edit', {id: user.id}) }}" class="btn btn-sm btn-success mb-1">Upravit</a>
-                        <form class="d-inline" action="{{ path('admin_user_delete', {id: user.id}) }}" method="post" onsubmit="return confirm('Jste si jistý')">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_user') }}">
-                            <button class="btn btn-sm btn-danger mb-1">Odstranit</button>
-                        </form>
+                        {% if is_granted('REMOVE', user) %}
+                            <form class="d-inline" action="{{ path('admin_user_delete', {id: user.id}) }}" method="post" onsubmit="return confirm('Jste si jistý')">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_user') }}">
+                                <button class="btn btn-sm btn-danger mb-1">Odstranit</button>
+                            </form>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

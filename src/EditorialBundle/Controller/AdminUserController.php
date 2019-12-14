@@ -67,6 +67,7 @@ class AdminUserController extends Controller
 
     /**
      * @Route("/{id}/smazat", name="admin_user_delete", methods={"DELETE"})
+     * @Security("is_granted('REMOVE', user)", message="Nemáte oprávnění ke smazání tohoto uživatele")
      */
     public function deleteAction(Request $request, User $user, UserRelationFinder $userRelationFinder)
     {
