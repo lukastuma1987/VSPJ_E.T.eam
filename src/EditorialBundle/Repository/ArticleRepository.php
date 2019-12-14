@@ -102,11 +102,11 @@ class ArticleRepository extends EntityRepository
     public function countByEditor(User $editor)
     {
         $query =  $this->createQueryBuilder('a')
-            ->select('COUNT (a.id)')
-            ->where('a.editor = :editor')
-            ->setParameter('editor', $editor)
-            ->getQuery()
-        ;
+        ->select('COUNT (a.id)')
+        ->where('a.editor = :editor')
+        ->setParameter('editor', $editor)
+        ->getQuery()
+    ;
 
         try {
             return $query->getSingleScalarResult();

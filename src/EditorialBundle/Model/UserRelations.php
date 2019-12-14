@@ -16,6 +16,8 @@ class UserRelations
     private $assignedCount;
     /** @var int */
     private $commentCount;
+    /** @var int */
+    private $helpDeskMessagesCount;
 
     public function __construct(User $user)
     {
@@ -24,6 +26,7 @@ class UserRelations
         $this->reviewsCount = 0;
         $this->assignedCount = 0;
         $this->commentCount = 0;
+        $this->helpDeskMessagesCount = 0;
     }
 
     /**
@@ -111,6 +114,24 @@ class UserRelations
     }
 
     /**
+     * @return int
+     */
+    public function getHelpDeskMessagesCount(): int
+    {
+        return $this->helpDeskMessagesCount;
+    }
+
+    /**
+     * @param int $helpDeskMessagesCount
+     * @return UserRelations
+     */
+    public function setHelpDeskMessagesCount(int $helpDeskMessagesCount): UserRelations
+    {
+        $this->helpDeskMessagesCount = $helpDeskMessagesCount;
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function hasRelations()
@@ -120,6 +141,7 @@ class UserRelations
             $this->getAssignedCount(),
             $this->getReviewsCount(),
             $this->getCommentCount(),
+            $this->getHelpDeskMessagesCount(),
         ];
 
         return array_sum($relationsCounts) > 0;
@@ -127,10 +149,11 @@ class UserRelations
 
     public function getRelationMessage()
     {
-        return sprintf('Uživatel má %d článků, %d hodnocení, %d komentářů a spravuje recenzní řízení pro %d článků.',
+        return sprintf('Uživatel má %d článků, %d hodnocení, %d komentářů, %d odpovědí na helpdesku a spravuje recenzní řízení pro %d článků.',
             $this->getArticlesCount(),
             $this->getReviewsCount(),
             $this->getCommentCount(),
+            $this->getHelpDeskMessagesCount(),
             $this->getAssignedCount()
         );
     }
