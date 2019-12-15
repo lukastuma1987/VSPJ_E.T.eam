@@ -4,6 +4,7 @@ namespace EditorialBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\UnexpectedResultException;
 use EditorialBundle\Entity\Review;
 
 class ArticleVersionRepository extends EntityRepository
@@ -40,7 +41,7 @@ class ArticleVersionRepository extends EntityRepository
 
         try {
             return $query->getSingleScalarResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (UnexpectedResultException $e) {
             return 1;
         }
     }
