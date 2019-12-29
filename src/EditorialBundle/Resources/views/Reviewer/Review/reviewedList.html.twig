@@ -1,22 +1,33 @@
 {% extends '@Editorial/base.html.twig' %}
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+{% import '@Editorial/Macros/tableHead.html.twig' as th %}
 
 {% block title %}Vámi hodnocené články{% endblock %}
 
 {% block content %}
     <h1>{{ block('title') }}</h1>
 
-    <table class="table table-striped">
+    {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        <div class="row">
+            <div class="col-sm">{{ form_row(form.author) }}</div>
+            <div class="col-sm">{{ form_row(form.status) }}</div>
+        </div>
+        <button class="btn btn-primary">Filtrovat</button>
+    {{ form_end(form) }}
+
+    <table class="table table-striped mt-5">
         <thead>
         <tr>
-            <th scope="col">#</th>
-            <th scope="col">Název článku</th>
-            <th scope="col">Autor</th>
-            <th scope="col">Status</th>
+            {{ th.nav(pagination, 'a.id', '#') }}
+            {{ th.nav(pagination, 'a.name', 'Název článku') }}
+            {{ th.nav(pagination, 'o.username', 'Autor') }}
+            {{ th.nav(pagination, 'a.status', 'Status') }}
             <th scope="col">Akce</th>
         </tr>
         </thead>
         <tbody>
-        {% for article in articles %}
+        {% for article in pagination %}
             <tr>
                 <th scope="row">{{ article.id }}</th>
                 <td>{{ article.name }}</td>
@@ -29,4 +40,10 @@
         {% endfor %}
         </tbody>
     </table>
+    <div class="pagination-navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+    <div class="pagination-count">
+        Celkem: {{ pagination.totalItemCount }}
+    </div>
 {% endblock %}

@@ -8,10 +8,12 @@ use EditorialBundle\Entity\Review;
 use EditorialBundle\Entity\User;
 use EditorialBundle\Enum\ArticleStatus;
 use EditorialBundle\Factory\EmailFactory;
-use EditorialBundle\Factory\ResponseFactory;
 use EditorialBundle\Form\ArticleStatusType;
 use EditorialBundle\Form\AssignReviewersType;
+use EditorialBundle\Form\Filter\EditorArticlesFilterType;
+use EditorialBundle\Form\Filter\OwnerArticlesFilterType;
 use EditorialBundle\Model\AssignReviewersModel;
+use EditorialBundle\Pagination\ArticlePaginator;
 use EditorialBundle\Repository\ArticleRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -27,32 +29,42 @@ class EditorController extends Controller
     /**
      * @Route("/vypis-neprirazenych-clanku", name="editor_unassigned_articles_list", methods={"GET"})
      */
-    public function unassignedArticleListAction()
+    public function unassignedArticleListAction(Request $request, ArticlePaginator $articlePaginator)
     {
-        /** @var ArticleRepository $repository */
-        $repository = $this->getDoctrine()->getRepository(Article::class);
-        /** @var Article[] $articles */
-        $articles = $repository->findUnassigned();
+        $form = $this->createForm(EditorArticlesFilterType::class, null, ['method' => 'GET']);
+        $form->handleRequest($request);
+
+        try {
+            $pagination = $articlePaginator->paginateUnassignedArticles($form->getData());
+        } catch (\Exception $exception) {
+            return $this->redirectToRoute('editor_unassigned_articles_list');
+        }
 
         return $this->render('@Editorial/Editor/Article/unassignedList.html.twig', [
-            'articles' => $articles,
+            'pagination' => $pagination,
+            'form' => $form->createView(),
         ]);
     }
 
     /**
      * @Route("/vypis-clanku-prirazenych-mne", name="editor_articles_assigned_to_editor_list", methods={"GET"})
      */
-    public function assignedToEditorArticleListAction()
+    public function assignedToEditorArticleListAction(Request $request, ArticlePaginator $articlePaginator)
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        /** @var ArticleRepository $repository */
-        $repository = $this->getDoctrine()->getRepository(Article::class);
-        /** @var Article[] $articles */
-        $articles = $repository->findByEditor($user);
+        /** @var User $editor */
+        $editor = $this->getUser();
+        $form = $this->createForm(EditorArticlesFilterType::class, null, ['method' => 'GET']);
+        $form->handleRequest($request);
+
+        try {
+            $pagination = $articlePaginator->paginateByEditor($editor, $form->getData());
+        } catch (\Exception $exception) {
+            return $this->redirectToRoute('editor_articles_assigned_to_editor_list');
+        }
 
         return $this->render('@Editorial/Editor/Article/assignedToEditorList.html.twig', [
-            'articles' => $articles,
+            'pagination' => $pagination,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -164,6 +176,16 @@ class EditorController extends Controller
 
             if ($article->getStatus() !== $status) {
                 $emailFactory->sendStatusChangedNotification($article);
+
+                if ($article->getStatus() === ArticleStatus::STATUS_CHIEF_NEEDED) {
+                    $emailFactory->sendChiefNeededNotification($article);
+                }
+            }
+
+            if ($article->getStatus() === ArticleStatus::STATUS_DECLINED && !$article->getEditor()) {
+                /** @var User $editor */
+                $editor = $this->getUser();
+                $article->setEditor($editor);
             }
 
             $em = $this->getDoctrine()->getManager();
@@ -171,7 +193,11 @@ class EditorController extends Controller
 
             $this->addFlash('success', 'Status článku upraven');
 
-            return $this->redirectToRoute('editor_articles_assigned_to_editor_list');
+            if ($article->getStatus() === ArticleStatus::STATUS_NEED_INFO) {
+                return $this->redirectToRoute('editor_unassigned_articles_list');
+            } else {
+                return $this->redirectToRoute('editor_articles_assigned_to_editor_list');
+            }
         }
 
         return $this->render('@Editorial/Editor/Article/changeStatus.html.twig', [

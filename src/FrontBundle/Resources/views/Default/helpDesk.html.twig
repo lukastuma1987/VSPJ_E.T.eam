@@ -1,0 +1,21 @@
+{% extends '@Front/base.html.twig' %}
+
+{% block title %}Helpdesk{% endblock %}
+
+{% block body %}
+    <h1>Helpdesk</h1>
+    <p class="subtitle">Odešlete zprávu a náš tým Vám v brzké době odpoví.</p>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {{ form_start(form, {attr: {class: 'help-desk-form'}}) }}
+        {{ form_widget(form) }}
+        <button>Odeslat</button>
+    {{ form_end(form) }}
+{% endblock %}

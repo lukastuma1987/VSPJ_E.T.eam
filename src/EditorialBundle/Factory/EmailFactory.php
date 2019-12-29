@@ -3,6 +3,7 @@
 namespace EditorialBundle\Factory;
 
 use EditorialBundle\Entity\Article;
+use EditorialBundle\Entity\HelpDeskMessage;
 use EditorialBundle\Entity\Review;
 use EditorialBundle\Entity\User;
 use EditorialBundle\Repository\UserRepository;
@@ -49,16 +50,6 @@ class EmailFactory
      */
     public function sendNewArticleNotification(Article $article)
     {
-        /** @var UserRepository $repository */
-        $repository = $this->doctrine->getRepository(User::class);
-        /** @var User[] $editors */
-        $editors = $repository->findEditors();
-        $recipients = [];
-
-        foreach ($editors as $editor) {
-            $recipients[] = $editor->getEmail();
-        }
-
         try {
             $htmlBody = $this->twig->render('@Editorial/Email/newArticle.html.twig', ['article' => $article]);
             $textBody = $this->twig->render('@Editorial/Email/newArticle.txt.twig', ['article' => $article]);
@@ -69,7 +60,7 @@ class EmailFactory
 
         $message = (new \Swift_Message('Přidán nový článek'))
             ->setFrom($this->sender)
-            ->setTo($recipients)
+            ->setTo($this->getEditorsEmails())
             ->setBody($htmlBody, 'text/html')
             ->addPart($textBody, 'text/plain')
         ;
@@ -181,6 +172,8 @@ class EmailFactory
 
     public function sendNewArticleVersionNotification(Article $article)
     {
+        $recipient = $article->getEditorEmail() ?: $this->getEditorsEmails();
+
         try {
             $htmlBody = $this->twig->render('@Editorial/Email/newArticleVersion.html.twig', ['article' => $article]);
             $textBody = $this->twig->render('@Editorial/Email/newArticleVersion.txt.twig', ['article' => $article]);
@@ -191,7 +184,49 @@ class EmailFactory
 
         $message = (new \Swift_Message('Byla vytvořena nová verze článku'))
             ->setFrom($this->sender)
-            ->setTo($article->getEditorEmail())
+            ->setTo($recipient)
+            ->setBody($htmlBody, 'text/html')
+            ->addPart($textBody, 'text/plain')
+        ;
+
+        $this->mailer->send($message);
+    }
+
+    public function sendHelpDeskAnswer(HelpDeskMessage $message)
+    {
+        try {
+            $htmlBody = $this->twig->render('@Editorial/Email/helpDeskAnswer.html.twig', ['message' => $message]);
+            $textBody = $this->twig->render('@Editorial/Email/helpDeskAnswer.txt.twig', ['message' => $message]);
+        } catch (Error $e) {
+            $this->logWarning($e->getMessage(), ['service' => EmailFactory::class]);
+            return;
+        }
+
+        $message = (new \Swift_Message('Odpověď na Vaši zprávu z helpdesku'))
+            ->setFrom($this->sender)
+            ->setTo($message->getEmail())
+            ->setBody($htmlBody, 'text/html')
+            ->addPart($textBody, 'text/plain')
+        ;
+
+        $this->mailer->send($message);
+    }
+
+    public function sendChiefNeededNotification(Article $article)
+    {
+        $recipient = $this->getEditorsEmails(true);
+
+        try {
+            $htmlBody = $this->twig->render('@Editorial/Email/chiefNeededNotification.html.twig', ['article' => $article]);
+            $textBody = $this->twig->render('@Editorial/Email/chiefNeededNotification.txt.twig', ['article' => $article]);
+        } catch (Error $e) {
+            $this->logWarning($e->getMessage(), ['service' => EmailFactory::class]);
+            return;
+        }
+
+        $message = (new \Swift_Message('Je vyžadován zásah šéfredaktora'))
+            ->setFrom($this->sender)
+            ->setTo($recipient)
             ->setBody($htmlBody, 'text/html')
             ->addPart($textBody, 'text/plain')
         ;
@@ -206,5 +241,20 @@ class EmailFactory
         if ($this->logger) {
             $this->logger->warning($message, $context);
         }
+    }
+
+    private function getEditorsEmails($chiefOnly = false)
+    {
+        /** @var UserRepository $repository */
+        $repository = $this->doctrine->getRepository(User::class);
+        /** @var User[] $editors */
+        $editors = $repository->findEditors($chiefOnly);
+        $recipients = [];
+
+        foreach ($editors as $editor) {
+            $recipients[] = $editor->getEmail();
+        }
+
+        return $recipients;
     }
 }

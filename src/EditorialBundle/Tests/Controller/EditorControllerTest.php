@@ -46,7 +46,7 @@ class EditorControllerTest extends WebTestCase
         $this->assertContains('Foo article', $response->getContent());
 
 
-        $form = $crawler->filter('form button')->form();
+        $form = $crawler->filter('td form button')->form();
 
         $crawler = $this->client->submit($form);
         $response = $this->client->getResponse();

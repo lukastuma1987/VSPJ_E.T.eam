@@ -1,4 +1,5 @@
 {% extends '@Editorial/base.html.twig' %}
+{% import '@Editorial/Macros/tableHead.html.twig' as th %}
 
 {% block title %}Články čekající na Vaše hodnocení{% endblock %}
 
@@ -8,20 +9,20 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Název článku</th>
-                <th scope="col">Autor</th>
-                <th scope="col">Deadline</th>
+                {{ th.nav(pagination, 'r.id', '#') }}
+                {{ th.nav(pagination, 'a.name', 'Název článku') }}
+                {{ th.nav(pagination, 'o.username', 'Autor') }}
+                {{ th.nav(pagination, 'r.deadline', 'Deadline') }}
                 <th scope="col">Verze</th>
                 <th scope="col">Akce</th>
             </tr>
         </thead>
         <tbody>
-        {% for review in reviews %}
+        {% for review in pagination %}
             <tr>
                 <th scope="row">{{ review.id }}</th>
-                <th>{{ review.articleName }}</th>
-                <th>{{ review.articleOwnerInfo }}</th>
+                <td>{{ review.articleName }}</td>
+                <td>{{ review.articleOwnerInfo }}</td>
                 <td>{{ review.deadline|date('d. m. Y') }}</td>
                 <td>{{ review|articleVersion }}</td>
                 <td>
@@ -33,4 +34,10 @@
         {% endfor %}
         </tbody>
     </table>
+    <div class="pagination-navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+    <div class="pagination-count">
+        Celkem: {{ pagination.totalItemCount }}
+    </div>
 {% endblock %}

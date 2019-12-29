@@ -5,9 +5,12 @@ namespace EditorialBundle\Controller;
 
 use EditorialBundle\Entity\Article;
 use EditorialBundle\Entity\Magazine;
-use EditorialBundle\Factory\ResponseFactory;
+use EditorialBundle\Factory\EmailFactory;
+use EditorialBundle\Form\ChiefEditorEditArticleType;
+use EditorialBundle\Form\Filter\ArticleFilterType;
 use EditorialBundle\Form\MagazineType;
 use EditorialBundle\Form\MagazineUploadType;
+use EditorialBundle\Pagination\ArticlePaginator;
 use EditorialBundle\Repository\MagazineRepository;
 use EditorialBundle\Util\FileNameUtil;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -144,14 +147,51 @@ class ChiefEditorController extends Controller
     /**
      * @Route("/clanky/vse", name="chief_editor_articles_list", methods={"GET"})
      */
-    public function listArticles()
+    public function listArticles(Request $request, ArticlePaginator $articlePaginator)
     {
-        $repository = $this->getDoctrine()->getRepository(Article::class);
-        /** @var Article[] $articles */
-        $articles = $repository->findAll();
+        $form = $this->createForm(ArticleFilterType::class, null, ['method' => 'GET']);
+        $form->handleRequest($request);
+
+        try {
+            $pagination = $articlePaginator->paginateAllArticles($form->getData());
+        } catch (\Exception $exception) {
+            return $this->redirectToRoute('chief_editor_articles_list');
+        }
 
         return $this->render('@Editorial/ChiefEditor/Article/list.html.twig', [
-            'articles' => $articles,
+            'pagination' => $pagination,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/clanek-{id}/upravit", name="chief_editor_article_edit", methods={"GET", "POST"})
+     */
+    public function editArticleAction(Request $request, Article $article, EmailFactory $emailFactory)
+    {
+        $status = $article->getStatus();
+        $form = $this->createForm(ChiefEditorEditArticleType::class, $article);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Article $article */
+            $article = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+
+            $this->addFlash('success', 'Vlastnosti článku upraveny');
+
+            if ($article->getStatus() !== $status) {
+                $emailFactory->sendStatusChangedNotification($article);
+            }
+
+            return $this->redirectToRoute('chief_editor_articles_list');
+        }
+
+        return $this->render('@Editorial/ChiefEditor/Article/editArticle.html.twig', [
+            'form' => $form->createView(),
+            'article' => $article,
         ]);
     }
 }

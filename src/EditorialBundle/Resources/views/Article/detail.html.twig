@@ -12,6 +12,7 @@
         <li class="list-group-item"><b>Status:</b> <span class="status-{{ article|statusClass }}">{{ article|statusName }}</span></li>
     </ul>
 
+    {% if article.authors|length %}
     <h2 class="mt-5">Autoři</h2>
     <table class="table table-striped">
         <thead>
@@ -29,7 +30,9 @@
         {% endfor %}
         </tbody>
     </table>
+    {% endif %}
 
+    {% if article.versions|length %}
     <h2 class="mt-5">Verze článku</h2>
     <table class="table table-striped">
         <thead>
@@ -51,7 +54,9 @@
         {% endfor %}
         </tbody>
     </table>
+    {% endif %}
 
+    {% if article.reviews|length %}
     <h2 class="mt-5">Posudky</h2>
     <table class="table table-striped review-table">
         <thead>
@@ -82,6 +87,7 @@
         {% endfor %}
         </tbody>
     </table>
+    {% endif %}
 
     <h2 class="mt-5" id="diskuse">Diskuse</h2>
     <hr>
@@ -89,6 +95,8 @@
         <h5>{{ comment.userInfo }} {{ comment.created|date('d. m. Y H:i') }}</h5>
         <p>{{ comment.content }}</p>
         <hr>
+    {% else %}
+        <p>Zatím nebyly vloženy žádné komentáře</p>
     {% endfor %}
     <a class="btn btn-primary" href="{{ path('article_comment_add', {id: article.id}) }}">Přidat komentář</a>
 {% endblock %}

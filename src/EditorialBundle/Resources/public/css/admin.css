@@ -12,7 +12,7 @@ body {
     color: #999;
 }
 
-a, a:hover, a:focus {
+#sidebar a, #sidebar a:hover, #sidebar a:focus {
     color: inherit;
     text-decoration: none;
     transition: all 0.3s;
@@ -174,6 +174,11 @@ i, span {
     color: rgb(52, 168, 213);
 }
 
+.status-need-info {
+    font-weight: bold;
+    color: #000f7d;
+}
+
 .status-assigned {
     font-weight: bold;
     color: #856404;
@@ -202,6 +207,11 @@ i, span {
 .status-accepted {
     font-weight: bold;
     color: #28a745;
+}
+
+.status-chief-needed {
+    font-weight: bold;
+    color: #2e002a;
 }
 
 @media (max-width: 768px) {
@@ -256,4 +266,13 @@ i, span {
 
 .review-table tbody tr:nth-of-type(4n + 1), .review-table tbody tr:nth-of-type(4n + 2) {
     background-color: rgba(0,0,0,.05);
+}
+
+.pagination-navigation {
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+.pagination-count {
+    display: inline-block;
 }

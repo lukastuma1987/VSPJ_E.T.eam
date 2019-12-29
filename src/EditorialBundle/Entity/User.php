@@ -98,6 +98,13 @@ class User implements UserInterface, \Serializable
      */
     private $comments;
 
+    /**
+     * @var ArrayCollection|HelpDeskMessage[]
+     *
+     * @ORM\OneToMany(targetEntity="HelpDeskMessage", mappedBy="manager", cascade={"persist"})
+     */
+    private $helpDeskMessages;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
@@ -105,6 +112,7 @@ class User implements UserInterface, \Serializable
         $this->editorArticles = new ArrayCollection();
         $this->reviews = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->helpDeskMessages = new ArrayCollection();
     }
 
     /**
@@ -464,6 +472,45 @@ class User implements UserInterface, \Serializable
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * @param HelpDeskMessage $message
+     * @return User
+     */
+    public function addHelpDeskMessage(HelpDeskMessage $message)
+    {
+        if (!$this->helpDeskMessages->contains($message)) {
+            $this->helpDeskMessages[] = $message;
+            $message->setManager($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param HelpDeskMessage $message
+     * @return User
+     */
+    public function removeHelpDeskMessage(HelpDeskMessage $message)
+    {
+        if ($this->helpDeskMessages->contains($message)) {
+            $this->helpDeskMessages->removeElement($message);
+
+            if ($message->getManager() === $this) {
+                $message->setManager(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|HelpDeskMessage[]
+     */
+    public function getHelpDeskMessages()
+    {
+        return $this->helpDeskMessages;
     }
 
     /**
