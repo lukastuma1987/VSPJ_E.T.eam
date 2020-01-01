@@ -10,6 +10,8 @@ use EditorialBundle\Entity\User;
 use EditorialBundle\Enum\ArticleStatus;
 use EditorialBundle\Factory\EmailFactory;
 use EditorialBundle\Form\ArticleType;
+use EditorialBundle\Form\Filter\OwnerArticlesFilterType;
+use EditorialBundle\Pagination\ArticlePaginator;
 use EditorialBundle\Util\FileNameUtil;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -80,13 +82,22 @@ class AuthorController extends Controller
     /**
      * @Route("/vase-clanky", name="author_articles_list", methods={"GET"})
      */
-    public function authorArticlesList()
+    public function authorArticlesList(Request $request, ArticlePaginator $articlePaginator)
     {
         /** @var User $author */
         $author = $this->getUser();
+        $form = $this->createForm(OwnerArticlesFilterType::class, null, ['method' => 'GET']);
+        $form->handleRequest($request);
+
+        try {
+            $pagination = $articlePaginator->paginateOwnerArticles($author, $form->getData());
+        } catch (\Exception $exception) {
+            return $this->redirectToRoute('author_articles_list');
+        }
 
         return $this->render('@Editorial/Author/Article/list.html.twig', [
-            'articles' => $author->getAuthorArticles(),
+            'pagination' => $pagination,
+            'form' => $form->createView(),
         ]);
     }
 

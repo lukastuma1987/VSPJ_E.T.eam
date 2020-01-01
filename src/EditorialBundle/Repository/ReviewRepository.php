@@ -3,19 +3,20 @@
 namespace EditorialBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\UnexpectedResultException;
 use EditorialBundle\Entity\User;
 
 class ReviewRepository extends EntityRepository
 {
-    public function findEmptyByReviewer(User $reviewer)
+    public function createEmptyByReviewerQuery(User $reviewer)
     {
         return $this->createQueryBuilder('r')
+            ->join('r.article', 'a')
+            ->join('a.owner', 'o')
             ->where('r.reviewer = :reviewer')
             ->andWhere('r.review IS NULL')
             ->setParameter('reviewer', $reviewer)
             ->getQuery()
-            ->getResult()
         ;
     }
 
@@ -30,7 +31,7 @@ class ReviewRepository extends EntityRepository
 
         try {
             return $query->getSingleScalarResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (UnexpectedResultException $e) {
             return 0;
         }
     }

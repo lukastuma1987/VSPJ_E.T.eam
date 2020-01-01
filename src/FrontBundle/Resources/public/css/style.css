@@ -7,7 +7,7 @@ body {
 }
 
 h1 {
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 15px;
     font-family: Domine, sans-serif;
     font-size: 35px;
@@ -35,7 +35,7 @@ h3 {
 }
 
 h4 {
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 15px;
     font-family: Domine, sans-serif;
     font-size: 18px;
@@ -53,7 +53,7 @@ h5 {
 }
 
 h6 {
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 15px;
     font-family: Domine, sans-serif;
     font-size: 16px;
@@ -62,7 +62,7 @@ h6 {
 }
 
 p {
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 20px;
     line-height: 160%;
     font-weight: 300;
@@ -74,13 +74,13 @@ a {
 }
 
 ul {
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 20px;
     padding-left: 40px;
 }
 
 ol {
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 10px;
     padding-left: 40px;
     font-family: Lato, sans-serif;
@@ -151,7 +151,7 @@ figcaption {
 
 .navigation-link {
     margin-left: 25px;
-    padding: 15px 0px;
+    padding: 15px 0;
     color: #aaa;
     font-size: 14px;
     text-decoration: none;
@@ -299,7 +299,7 @@ figcaption {
 }
 
 .footer-link.float-right {
-    margin-right: 0px;
+    margin-right: 0;
     float: right;
 }
 
@@ -399,7 +399,7 @@ figcaption {
 }
 
 .success-text {
-    margin-bottom: 0px;
+    margin-bottom: 0;
     font-size: 17px;
 }
 
@@ -423,10 +423,11 @@ figcaption {
     padding-top: 60px;
     padding-bottom: 60px;
     background-color: #fff;
+    min-height: 75vh;
 }
 
 .blog-title {
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 10px;
     font-size: 29px;
     line-height: 33px;
@@ -450,7 +451,7 @@ figcaption {
 }
 
 .section-header {
-    margin: 0px 7% 40px;
+    margin: 0 7% 40px;
     padding-bottom: 40px;
     border-bottom: 1px solid #d3d3d3;
     background-color: #fff;
@@ -675,7 +676,7 @@ p.subtitle {
     text-align: center;
 }
 
-form.help-desk-form input, form.help-desk-form textarea {
+form.help-desk-form input, form.help-desk-form textarea, form.registration-form input {
     display: block;
     width: 100%;
     padding: .375rem .75rem;
@@ -694,7 +695,7 @@ form.help-desk-form textarea {
     min-height: 10rem;
 }
 
-form.help-desk-form button {
+form.help-desk-form button, form.registration-form button {
     display: block;
     font-weight: 400;
     color: #fff;
@@ -713,13 +714,13 @@ form.help-desk-form button {
     margin: 0 auto;
 }
 
-form.help-desk-form ul {
+form.help-desk-form ul, form.registration-form ul {
     list-style-type: none;
     padding-left: 0;
     margin: 0;
 }
 
-form.help-desk-form ul li {
+form.help-desk-form ul li, form.registration-form ul li {
     color: #bd2130;
 }
 
@@ -736,6 +737,11 @@ form.help-desk-form ul li {
     color: #155724;
     background-color: #d4edda;
     border-color: #c3e6cb;
+}
+
+h1.error-title {
+    margin-top: 10rem;
+    margin-bottom: 10rem;
 }
 
 @media (max-width: 991px) {
@@ -780,8 +786,8 @@ form.help-desk-form ul li {
         text-align: center;
     }
     .blog-body-wrapper {
-        margin-right: 0%;
-        margin-left: 0%;
+        margin-right: 0;
+        margin-left: 0;
     }
 }
 
@@ -799,20 +805,20 @@ form.help-desk-form ul li {
     }
     .footer-link {
         display: inline-block;
-        margin: 0px 10px;
+        margin: 0 10px;
     }
     .footer-link.float-right {
-        margin-left: 0px;
+        margin-left: 0;
         float: none;
     }
     .post-wrapper {
-        margin-right: 0%;
+        margin-right: 0;
         margin-bottom: 30px;
-        margin-left: 0%;
+        margin-left: 0;
         padding-bottom: 30px;
     }
     .body-copy blockquote {
-        margin-left: 0px;
+        margin-left: 0;
     }
     .social-link-group {
         margin-bottom: 20px;
@@ -824,7 +830,7 @@ form.help-desk-form ul li {
     }
     .content-wrapper {
         width: 100%;
-        margin-left: 0px;
+        margin-left: 0;
         padding: 30px 20px;
     }
     .blog-title {
@@ -836,9 +842,9 @@ form.help-desk-form ul li {
         padding: 34px;
     }
     .section-header {
-        margin-right: 0px;
+        margin-right: 0;
         margin-bottom: 30px;
-        margin-left: 0%;
+        margin-left: 0;
         padding-bottom: 30px;
     }
     .site-description {
@@ -849,8 +855,8 @@ form.help-desk-form ul li {
         padding-left: 10px;
     }
     .blog-body-wrapper {
-        margin-right: 0%;
-        margin-left: 0%;
+        margin-right: 0;
+        margin-left: 0;
     }
     .footer-text {
         margin-right: 10px;
@@ -860,7 +866,7 @@ form.help-desk-form ul li {
         padding-bottom: 20px;
     }
     .site-name-link {
-        padding-left: 0px;
+        padding-left: 0;
     }
     .align-content-right {
         text-align: center;
@@ -876,7 +882,7 @@ form.help-desk-form ul li {
         margin-bottom: 4px;
     }
     .social-link-group {
-        margin-top: 0px;
+        margin-top: 0;
     }
     .blog-title {
         font-size: 26px;
@@ -897,8 +903,8 @@ form.help-desk-form ul li {
     }
     .nav-link.blog-name {
         display: block;
-        margin-right: 0px;
+        margin-right: 0;
         margin-bottom: 11px;
-        margin-left: 0px;
+        margin-left: 0;
     }
 }

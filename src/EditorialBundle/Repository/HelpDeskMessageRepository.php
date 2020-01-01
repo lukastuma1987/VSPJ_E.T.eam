@@ -3,6 +3,10 @@
 namespace EditorialBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\UnexpectedResultException;
+use EditorialBundle\Entity\User;
 
 class HelpDeskMessageRepository extends EntityRepository
 {
@@ -26,5 +30,21 @@ class HelpDeskMessageRepository extends EntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function countByManager(User $manager)
+    {
+        $query =  $this->createQueryBuilder('h')
+            ->select('COUNT (h.id)')
+            ->where('h.manager = :manager')
+            ->setParameter('manager', $manager)
+            ->getQuery()
+        ;
+
+        try {
+            return $query->getSingleScalarResult();
+        } catch (UnexpectedResultException $e) {
+            return 0;
+        }
     }
 }

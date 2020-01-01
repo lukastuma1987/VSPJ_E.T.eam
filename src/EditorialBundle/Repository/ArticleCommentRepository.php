@@ -3,7 +3,7 @@
 namespace EditorialBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\UnexpectedResultException;
 use EditorialBundle\Entity\User;
 
 class ArticleCommentRepository extends EntityRepository
@@ -20,7 +20,7 @@ class ArticleCommentRepository extends EntityRepository
 
         try {
             return $query->getSingleScalarResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (UnexpectedResultException $e) {
             return 0;
         }
     }
