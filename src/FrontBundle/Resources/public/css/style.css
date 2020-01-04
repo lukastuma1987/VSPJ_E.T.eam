@@ -744,6 +744,10 @@ h1.error-title {
     margin-bottom: 10rem;
 }
 
+.space-top {
+    margin-top: 1rem;
+}
+
 @media (max-width: 991px) {
     .navigation-link {
         text-align: center;

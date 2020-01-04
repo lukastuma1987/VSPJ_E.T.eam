@@ -5,8 +5,20 @@
 {% block body %}
     <h1>Čísla časopisu</h1>
     <ul>
+        {% set currentYear = 0 %}
+
         {% for magazine in magazines %}
-            <li><a href="{{ path('stahnout_casopis', {id: magazine.id}) }}">Ročník {{ magazine.year }}, číslo {{ magazine.number }}</a></li>
+            {% if loop.first %}
+                {% set currentYear = magazine.year %}
+            {% endif %}
+
+            <li{% if magazine.year != currentYear %} class="space-top"{% endif %}>
+                <a href="{{ path('stahnout_casopis', {id: magazine.id}) }}">
+                    Ročník {{ magazine.year }}, číslo {{ magazine.number }}
+                </a>
+            </li>
+
+            {% set currentYear = magazine.year %}
         {% endfor %}
     </ul>
 {% endblock %}
