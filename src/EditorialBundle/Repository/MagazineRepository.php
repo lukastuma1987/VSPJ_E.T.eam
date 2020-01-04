@@ -20,6 +20,8 @@ class MagazineRepository extends EntityRepository
     {
         return $this->createQueryBuilder('m')
             ->where('m.suffix IS NOT NULL')
+            ->orderBy('m.year', 'DESC')
+            ->addOrderBy('m.number', 'DESC')
             ->getQuery()
             ->getResult()
         ;
