@@ -34,19 +34,22 @@ class AuthorControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    public function testCreateArticle()
+    /**
+     * @dataProvider provideCreateEdit
+     */
+    public function testCreateArticle($fileName, $mime)
     {
         self::login($this->client, 'author', 'author');
 
         $crawler = $this->client->request('GET', '/redakce/autor/novy-clanek');
         $response = $this->client->getResponse();
 
-        $this->assertTrue($response->isOk());
+        $this->assertSame(200, $response->getStatusCode());
 
         $form = $crawler->filter('form button')->form();
         $form['editorialbundle_article[name]'] = 'Foo';
         $form['editorialbundle_article[magazine]']->select(1);
-        $form['editorialbundle_article[file]'] = $this->prepareFile();;
+        $form['editorialbundle_article[file]'] = $this->prepareFile($fileName, $mime);
 
         $form['editorialbundle_article[authors][0][fullName]'] = 'Foo';
         $form['editorialbundle_article[authors][0][email]'] = 'Foo@Foo.cz';
@@ -56,17 +59,20 @@ class AuthorControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
         $response = $this->client->getResponse();
 
-        $this->assertTrue($response->isRedirection());
+        $this->assertSame(302, $response->getStatusCode());
 
         $crawler = $this->client->followRedirect();
         $response = $this->client->getResponse();
 
-        $this->assertTrue($response->isOk());
+        $this->assertSame(200, $response->getStatusCode());
 
         $this->assertContains('Článek byl úspěšně vytvořen.', $response->getContent());
     }
 
-    public function testEditArticle()
+    /**
+     * @dataProvider provideCreateEdit
+     */
+    public function testEditArticle($fileName, $mime)
     {
         $article = $this->prepareArticle();
 
@@ -76,22 +82,30 @@ class AuthorControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $uri);
         $response = $this->client->getResponse();
 
-        $this->assertTrue($response->isOk());
+        $this->assertSame(200, $response->getStatusCode());
 
         $form = $crawler->filter('form button')->form();
-        $form['editorialbundle_article[file]'] = $this->prepareFile();
+        $form['editorialbundle_article[file]'] = $this->prepareFile($fileName, $mime);
 
         $crawler = $this->client->submit($form);
         $response = $this->client->getResponse();
 
-        $this->assertTrue($response->isRedirection());
+        $this->assertSame(302, $response->getStatusCode());
 
         $crawler = $this->client->followRedirect();
         $response = $this->client->getResponse();
 
-        $this->assertTrue($response->isOk());
+        $this->assertSame(200, $response->getStatusCode());
 
         $this->assertContains('Článek byl úspěšně upraven.', $response->getContent());
+    }
+
+    public function provideCreateEdit()
+    {
+        return [
+            ['dummy.doc', 'application/msword'],
+            ['dummy.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+        ];
     }
 
     // private
@@ -140,13 +154,8 @@ class AuthorControllerTest extends WebTestCase
         return $article;
     }
 
-    private function prepareFile()
+    private function prepareFile($fileName, $mime)
     {
-        return new UploadedFile(
-            __DIR__ .'/../Fixtures/fixtures.sql',
-            'fixtures.sql',
-            'application/sql',
-            123
-        );
+        return new UploadedFile(__DIR__ .'/../Fixtures/' . $fileName, $fileName, $mime, 123);
     }
 }
