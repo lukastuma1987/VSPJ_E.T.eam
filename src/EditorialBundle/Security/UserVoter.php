@@ -52,7 +52,7 @@ class UserVoter extends Voter
 
     private function canRemove(User $user, User $currentUser)
     {
-        if (!$this->security->isGranted('ROLE_AUTHOR')) {
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
             return false;
         }
 

@@ -676,7 +676,7 @@ p.subtitle {
     text-align: center;
 }
 
-form.help-desk-form input, form.help-desk-form textarea {
+form.help-desk-form input, form.help-desk-form textarea, form.registration-form input {
     display: block;
     width: 100%;
     padding: .375rem .75rem;
@@ -695,7 +695,7 @@ form.help-desk-form textarea {
     min-height: 10rem;
 }
 
-form.help-desk-form button {
+form.help-desk-form button, form.registration-form button {
     display: block;
     font-weight: 400;
     color: #fff;
@@ -714,13 +714,13 @@ form.help-desk-form button {
     margin: 0 auto;
 }
 
-form.help-desk-form ul {
+form.help-desk-form ul, form.registration-form ul {
     list-style-type: none;
     padding-left: 0;
     margin: 0;
 }
 
-form.help-desk-form ul li {
+form.help-desk-form ul li, form.registration-form ul li {
     color: #bd2130;
 }
 

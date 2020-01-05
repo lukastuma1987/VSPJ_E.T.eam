@@ -4,13 +4,17 @@ namespace FrontBundle\Controller;
 
 use EditorialBundle\Entity\HelpDeskMessage;
 use EditorialBundle\Entity\Magazine;
+use EditorialBundle\Entity\Role;
 use EditorialBundle\Entity\User;
 use EditorialBundle\Factory\ResponseFactory;
 use EditorialBundle\Form\HelpDeskMessageType;
+use EditorialBundle\Form\RegistrationType;
 use EditorialBundle\Repository\MagazineRepository;
+use EditorialBundle\Repository\RoleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class DefaultController extends Controller
 {
@@ -89,6 +93,42 @@ class DefaultController extends Controller
         }
 
         return $this->render('@Front/Default/helpDesk.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/registrace", name="registration", methods={"GET", "POST"})
+     */
+    public function registrationAction(Request $request)
+    {
+        $form = $this->createForm(RegistrationType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $passwordEncoder = $this->get('security.password_encoder');
+            $doctrine = $this->getDoctrine();
+            /** @var RoleRepository $repository */
+            $repository = $doctrine->getRepository(Role::class);
+            /** @var Role $roleAuthor */
+            $roleAuthor = $repository->findOneByRole('ROLE_AUTHOR');
+            /** @var User $user */
+            $user = $form->getData();
+
+            $password = $passwordEncoder->encodePassword($user, $user->getPlaintextPassword());
+            $user->setPassword($password);
+            $user->addRole($roleAuthor);
+
+            $em = $doctrine->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Účet byl úspěšně vytvořen. Můžete se přihlásit.');
+
+            return $this->redirectToRoute('login');
+        }
+
+        return $this->render('@Front/Default/registration.html.twig', [
             'form' => $form->createView(),
         ]);
     }

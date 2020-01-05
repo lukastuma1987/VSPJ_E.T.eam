@@ -11,11 +11,20 @@
     <div class="container">
         <div class="row mt-5">
             <div class="col-sm-4 m-auto text-center">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
                 {% if error %}
                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                 {% endif %}
                 <form action="{{ path('login') }}" method="post">
-                    <div class="input-group mb-3">
+                    <a href="{{ path('registration') }}">Registrace nového autora</a>
+                    <div class="input-group mb-3 mt-2">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="username_label">
                                 <i class="fas fa-user"></i>

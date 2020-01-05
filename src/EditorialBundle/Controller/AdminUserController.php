@@ -67,9 +67,9 @@ class AdminUserController extends Controller
 
     /**
      * @Route("/{id}/smazat", name="admin_user_delete", methods={"DELETE"})
-     * @Security("is_granted('REMOVE', user)", message="Nemáte oprávnění ke smazání tohoto uživatele")
+     * @Security("is_granted('REMOVE', userToRemove)", message="Nemáte oprávnění ke smazání tohoto uživatele")
      */
-    public function deleteAction(Request $request, User $user, UserRelationFinder $userRelationFinder)
+    public function deleteAction(Request $request, User $userToRemove, UserRelationFinder $userRelationFinder)
     {
         if (!$this->isCsrfTokenValid('delete_user', $request->get('_token'))) {
             $this->addFlash('danger', 'Neplatný CSRF token. Zkuste to prosím znovu');
@@ -77,7 +77,7 @@ class AdminUserController extends Controller
             return $this->redirectToRoute('admin_user_list');
         }
 
-        $userRelations = $userRelationFinder->findUserRelations($user);
+        $userRelations = $userRelationFinder->findUserRelations($userToRemove);
         if ($userRelations->hasRelations()) {
             $message = $userRelations->getRelationMessage();
             $message .= ' Z tohoto důvodu nemůže být odstraněn';
@@ -86,10 +86,10 @@ class AdminUserController extends Controller
             return $this->redirectToRoute('admin_user_list');
         }
 
-        $username = $user->getUsername();
+        $username = $userToRemove->getUsername();
 
         $em = $this->getDoctrine()->getManager();
-        $em->remove($user);
+        $em->remove($userToRemove);
         $em->flush();
 
         $this->addFlash('success', sprintf('Uživatel "%s" byl úspěšně odstraněn.', $username));
